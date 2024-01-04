@@ -1,7 +1,7 @@
 import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7/+esm'
 import {dragstarted, dragged, dragended} from '../utils/dragFunctions.js'
 
-const Graph = (graphData, headId) => {
+const Graph = ({nodes, links, headId}) => {
 	// set the dimensions and margins of the graph
 	const margin = {top: 0, right: 0, bottom: 0, left: 0},
 		width = 1000 - margin.left - margin.right,
@@ -30,13 +30,13 @@ const Graph = (graphData, headId) => {
 
 	// Let's list the force we wanna apply on the network
 	const simulation = d3
-		.forceSimulation(graphData.nodes) // Force algorithm is applied to data.nodes
+		.forceSimulation(nodes) // Force algorithm is applied to data.nodes
 		.force(
 			'link',
 			d3
 				.forceLink() // This force provides links between nodes
 				.id(d => d.id) // This provide  the id of a node
-				.links(graphData.links) // and this the list of links
+				.links(links) // and this the list of links
 		)
 		.force('charge', d3.forceManyBody().strength(-2500)) // This adds repulsion between nodes. Play with the -400 for the repulsion strength
 		.force('center', d3.forceCenter(width / 2, height / 2)) // This force attracts nodes to the center of the svg area
@@ -74,7 +74,7 @@ const Graph = (graphData, headId) => {
 	// Initialize the links
 	const link = svg
 		.selectAll('line')
-		.data(graphData.links)
+		.data(links)
 		.enter()
 		.append('line')
 		.style('stroke', '#aaa')
@@ -85,7 +85,7 @@ const Graph = (graphData, headId) => {
 	// Initialize the nodes
 	const node = svg
 		.selectAll('circle')
-		.data(graphData.nodes)
+		.data(nodes)
 		.enter()
 		.append('circle')
 		.attr('r', d => (d.type === 'branch' ? radius : radius / 2))
@@ -103,7 +103,7 @@ const Graph = (graphData, headId) => {
 		)
 
 	// Initialize the text containers
-	const branchContainer = svg.selectAll('text').data(graphData.nodes).enter().append('g')
+	const branchContainer = svg.selectAll('text').data(nodes).enter().append('g')
 
 	// Add branch name texts
 	const branchNameText = branchContainer

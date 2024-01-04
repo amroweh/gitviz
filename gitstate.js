@@ -2,7 +2,7 @@ import {updateGraph} from './utils/graphFunctions.js'
 import {newCommitId, newTreeId, newBlobId} from './utils/idGen.js'
 
 export const gitState = {
-	HEAD: 0,
+	HEAD: 1,
 	Branches: [
 		{id: newCommitId(), name: 'main', pointsTo: 5},
 		{id: newCommitId(), name: 'myBranch', pointsTo: 6}
@@ -25,11 +25,16 @@ export const gitState = {
 }
 
 // CHANGE DEFAULTS!
-export const addBranch = (id = newCommitId(), name = 'branch', pointsTo = 4) => {
-	gitState.Branches.push({id, name, pointsTo})
+export const findBranch = branchName => {
+	if (!branchName) return
+	return gitState.Branches.find(branch => branch.name === branchName)
+}
+export const addBranch = (name = 'branch', pointsTo = 4) => {
+	if(findBranch(name)) return
+	gitState.Branches.push({id:newCommitId(), name, pointsTo})
 	updateGraph()
 }
 export const removeBranchById = id => {
-    gitState.Branches = gitState.Branches.filter(branch => branch.id !== id)
+	gitState.Branches = gitState.Branches.filter(branch => branch.id !== id)
 	updateGraph()
 }
