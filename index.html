@@ -1,15 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Git Vis</title>
-</head>
-<body>
-    <div id="graph"></div>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Git Vis</title>
+		<link rel="stylesheet" href="index.css" />
+	</head>
+	<body>
+		<!-- Components -->
+		<div id="graph"></div>
+		<div id="terminal">
+			<div style="overflow-y: 'hidden'; overflow-x: 'auto'; height: '100%'">
+				<div id="terminalHistory"></div>
+				<div style="height: 0">&nbsp;</div>
+			</div>
+			<div style="display: 'flex'; align-items: 'center'">
+				<div style="fontsize: '16px'">gitsim&nbsp;%&nbsp;</div>
+				<input id="terminalInput" autofocus type="text" />
+			</div>
+		</div>
 
-    <script type="module" src="./index.js"></script>
-    <script type="module" src="./gitstate.js"></script>
-    <script type="module" src="./graph.js"></script>
-</body>
+		<!-- Scripts -->
+		<script type="module" src="./index.js"></script>
+		<script type="module" src="./gitstate.js"></script>
+		<script type="module" src="./graph.js"></script>
+		<script type="module" src="./terminalHandler.js"></script>
+		<script type="module" src="./runFunction.js"></script>
+	</body>
 </html>

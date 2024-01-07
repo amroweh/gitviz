@@ -18,6 +18,4 @@ const convertStateToGraph = () => {
 	})
 	return {nodes, links, headId}
 }
-export const updateGraph = () => {
-	Graph(convertStateToGraph())
-}
+export const updateGraph = () => Graph(convertStateToGraph())
