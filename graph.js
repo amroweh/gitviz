@@ -79,7 +79,7 @@ const Graph = ({nodes, links, headId}) => {
 		.append('line')
 		.style('stroke', '#aaa')
 		.attr('marker-end', d =>
-			d.target.type === 'branch' ? 'url(#arrowhead_branch_branch)' : 'url(#arrowhead_branch_commit)'
+			d.target.type === 'commit' ? 'url(#arrowhead_branch_commit)' : 'url(#arrowhead_branch_branch)'
 		)
 
 	// Initialize the nodes
@@ -88,12 +88,13 @@ const Graph = ({nodes, links, headId}) => {
 		.data(nodes)
 		.enter()
 		.append('circle')
-		.attr('r', d => (d.type === 'branch' ? radius : radius / 2))
-		.style('fill', d => (d.type === 'branch' ? '#69b3a2' : 'orange'))
-		.style('stroke-width', '4px')
-		.style('stroke', d => {
-			if (d.id === headId) return 'purple'
+		.attr('r', d => (d.type === 'commit' ? radius / 2 : radius))
+		.style('fill', d => {
+			if (d.type === 'commit') return 'orange'
+			else if (d.type === 'branch') return '#69b3a2'
+			else if (d.type === 'head') return 'red'
 		})
+		.style('stroke-width', '4px')
 		.call(
 			d3
 				.drag()
@@ -112,19 +113,19 @@ const Graph = ({nodes, links, headId}) => {
 		.text(d => d.name) // adds asterisk to head branch
 
 	// Add the labels
-	const labelBox = branchContainer
-		.append('rect')
-		.attr('width', d => (d.id === headId ? 55 : 0))
-		.attr('height', d => (d.id === headId ? 25 : 0))
-		.style('fill', 'purple')
-		.style('rx', 3)
-		.style('ry', 3)
+	// const labelBox = branchContainer
+	// 	.append('rect')
+	// 	.attr('width', d => (d.id === headId ? 55 : 0))
+	// 	.attr('height', d => (d.id === headId ? 25 : 0))
+	// 	.style('fill', 'purple')
+	// 	.style('rx', 3)
+	// 	.style('ry', 3)
 
-	const labelText = branchContainer
-		.append('text')
-		.text(d => (d.id === headId ? 'HEAD' : null))
-		.style('fill', d => (d.id === headId ? '#CF9FFF' : null))
-		.attr('class', 'labelText')
+	// const labelText = branchContainer
+	// 	.append('text')
+	// 	.text(d => (d.id === headId ? 'HEAD' : null))
+	// 	.style('fill', d => (d.id === headId ? '#CF9FFF' : null))
+	// 	.attr('class', 'labelText')
 
 	// This function is run at each iteration of the force algorithm, updating the nodes position.
 	// note: d is provided by the simulation
@@ -137,8 +138,8 @@ const Graph = ({nodes, links, headId}) => {
 
 		node.attr('cx', d => d.x).attr('cy', d => d.y)
 		branchNameText.attr('x', d => d.x + textOffsetX).attr('y', d => d.y + textOffsetY)
-		labelText.attr('x', d => d.x + labelTextOffsetX).attr('y', d => d.y + labelTextOffsetY)
-		labelBox.attr('x', d => d.x + labelRectOffsetX).attr('y', d => d.y + labelRectOffsetY)
+		// labelText.attr('x', d => d.x + labelTextOffsetX).attr('y', d => d.y + labelTextOffsetY)
+		// labelBox.attr('x', d => d.x + labelRectOffsetX).attr('y', d => d.y + labelRectOffsetY)
 	}
 }
 

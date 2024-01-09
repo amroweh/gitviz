@@ -1,5 +1,5 @@
 let branchIds = 0,
-	commitIds = 0,
+	commitIds = 1,
 	treeIds = 0,
 	blobIds = 0
 
