@@ -8,11 +8,15 @@ export const gitState = {
 		{name: 'myBranch', pointsTo: 2}
 	],
 	Objects: {
-		Blobs: [],
+		Blobs: [
+			{id: newBlobId(), content: 'Hello from file 1'},
+			{id: newBlobId(), content: 'Hello from file 1, amended'},
+			{id: newBlobId(), content: 'Hello from file 1'}
+		],
 		Trees: [
-			{id: newTreeId(), type: 'blob'},
-			{id: newTreeId(), type: 'blob'},
-			{id: newTreeId(), type: 'tree'}
+			{id: newTreeId(), modeBits: 100644, type: 'blob', blobRef: 1, objectName: 'file1.txt'}, // name or path?
+			{id: newTreeId(), modeBits: 100644, type: 'blob', blobRef: 2, objectName: 'file1.txt'},
+			{id: newTreeId(), modeBits: 100644, type: 'tree', treeRef: 1, objectName: 'file1.txt'} // what would this be for tree?
 		],
 		Commits: [
 			{id: newCommitId(), message: 'initialcommit', tree: 3, parentCommit: null, author: 'ali', committer: 'ali'},
@@ -21,7 +25,13 @@ export const gitState = {
 			{id: newCommitId(), message: '4th commit', tree: 4, parentCommit: 3, author: 'ali', committer: 'ali'},
 			{id: newCommitId(), message: '5th commit', tree: 5, parentCommit: 3, author: 'ali', committer: 'ali'}
 		]
-	}
+	},
+	Index: [
+		{modeBits: 100644, blobRef: 1, stageNumber: null, objectName: 'file1.txt'},
+		{modeBits: 100644, blobRef: 1, stageNumber: null, objectName: 'file2.txt'},
+		{modeBits: 100644, blobRef: 2, stageNumber: null, objectName: null},
+		{modeBits: 100644, blobRef: 3, stageNumber: null, objectName: null}
+	]
 }
 
 // Branch Functions
