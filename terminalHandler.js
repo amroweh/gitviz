@@ -1,7 +1,9 @@
+import {gitState} from './gitstate.js'
 import {run} from './runFunction.js'
 
-const terminalInputElement = document.querySelector('#terminalInput')
-const terminalHistoryElement = document.querySelector('#terminalHistory')
+const terminalInputElement = document.querySelector('#terminal_input')
+const terminalHistoryElement = document.querySelector('#terminal_history')
+const terminalPromptElement = document.querySelector('#terminal_prompt')
 
 const cmdHistory = []
 const terminalHistory = []
@@ -37,3 +39,7 @@ const clearTerminalInput = () => (terminalInputElement.value = '')
 export const clearTerminal = () => {
 	terminalHistoryElement.innerHTML = null
 }
+
+setInterval(() => {
+	terminalPromptElement.innerHTML = `gitsim&nbsp;<span style='color: #4AF626;'>[${gitState.HEAD}]</span>&nbsp;%&nbsp;`
+}, 500)

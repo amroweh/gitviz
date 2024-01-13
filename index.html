@@ -10,14 +10,19 @@
 		<!-- Components -->
 		<div id="graph"></div>
 		<div id="terminal">
-			<div style="overflow-y: 'hidden'; overflow-x: 'auto'; height: '100%'">
-				<div id="terminalHistory"></div>
+			<div id="terminal_history_section">
+				<div id="terminal_history"></div>
 				<div style="height: 0">&nbsp;</div>
 			</div>
-			<div style="display: 'flex'; align-items: 'center'">
-				<div style="fontsize: '16px'">gitsim&nbsp;%&nbsp;</div>
-				<input id="terminalInput" autofocus type="text" />
+			<div id="terminal_input_section">
+				<div id="terminal_prompt">gitsim&nbsp;%&nbsp;</div>
+				<input id="terminal_input" autofocus type="text" />
 			</div>
+		</div>
+		<div id="git_areas">
+			<div id="working_area"></div>
+			<div id="staging_area"></div>
+			<div id="git_dir"></div>
 		</div>
 
 		<!-- Scripts -->

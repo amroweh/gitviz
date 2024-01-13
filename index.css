@@ -5,32 +5,50 @@
 }
 
 /* Graph */
+
 #graph {
+	text-align: center;
+	margin: auto;
 }
 
 /* Terminal */
 
 #terminal {
-	display: 'flex';
-	flex-direction: 'column';
-	justify-content: 'space-between';
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
 	background-color: #000000;
 	color: white;
-	font-family: 'monospace';
-	font-size: '14px';
-	padding: '3px 5px';
+	font-family: monospace;
+	font-size: 14px;
+	padding: 3px 5px;
 	height: 200px;
 	width: 100%;
 }
 
-#terminalInput {
+#terminal_history_section {
+	overflow-y: hidden;
+	overflow-x: auto;
+	height: 100%;
+}
+
+#terminal_input {
 	margin: 0;
-	font-family: 'monospace';
-	font-size: '16px';
-	border: 'none';
-	outline: 'none';
-	background-color: '#000000';
-	color: 'white';
-	width: '100%';
-	caret-shape: 'bar';
+	font-family: monospace;
+	font-size: 16px;
+	border: none;
+	outline: none;
+	background-color: #000000;
+	color: white;
+	width: 100%;
+	caret-shape: bar;
+}
+
+#terminal_prompt {
+	font-size: 16px;
+}
+
+#terminal_input_section {
+	display: flex;
+	align-items: center;
 }

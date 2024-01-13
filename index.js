@@ -1,4 +1,4 @@
-import {addBranch, removeBranchById} from './gitstate.js'
+import {addBranch} from './gitstate.js'
 import {updateGraph} from './utils/graphFunctions.js'
 
 updateGraph()

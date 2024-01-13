@@ -4,10 +4,9 @@ import {
 	findAllBranches,
 	findBranchByName,
 	findCommitById,
-	getCommitIdPointedByBranch_Id,
-	getNodeTypeById,
+	getCommitIdPointedByBranch_Name,
 	gitState,
-	removeBranchById
+	removeBranchByName
 } from './gitstate.js'
 import {addToTerminalHistory, clearTerminal} from './terminalHandler.js'
 
@@ -64,7 +63,7 @@ export const run = cmd => {
 
 		// Create message based on node type && set HEAD to new id
 		if (branch) {
-			changeHead(branch.pointsTo)
+			changeHead(branch.name)
 			return addToTerminalHistory(`You are checking out branch: ${branch.name}`)
 		}
 		if (commit) {
@@ -83,10 +82,10 @@ export const run = cmd => {
 		const branch = findBranchByName(branchName)
 		if (!branch) return addToTerminalHistory(`branch ${branchName} not found, aborting...`)
 		// check if the branch is current
-		if (branch.pointsTo === gitState.HEAD)
+		if (branchName === gitState.HEAD)
 			return addToTerminalHistory(`please switch to a different branch before deleting. aborting...`)
 		// if branch exists & not pointing to same commit as HEAD, we are able to delete it
-		removeBranchById(branch.id)
+		removeBranchByName(branchName)
 		return addToTerminalHistory(`branch ${branchName} deleted successfully`)
 	}
 	if (regex4.test(cmd)) {
@@ -128,7 +127,7 @@ export const run = cmd => {
 	if (regex6.test(cmd)) {
 		console.log('regex 6 passed!')
 		findAllBranches().forEach(branch =>
-			addToTerminalHistory(getCommitIdPointedByBranch_Id(branch.id) === gitState.HEAD ? '*' + branch.name : branch.name)
+			addToTerminalHistory(branch.name === gitState.HEAD ? '*' + branch.name : branch.name)
 		)
 		return
 	}
