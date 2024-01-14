@@ -1,4 +1,4 @@
-import {gitState} from './gitstate.js'
+import {diffWorkingStaging, gitState} from './gitstate.js'
 import {run} from './runFunction.js'
 
 const terminalInputElement = document.querySelector('#terminal_input')
@@ -41,5 +41,8 @@ export const clearTerminal = () => {
 }
 
 setInterval(() => {
-	terminalPromptElement.innerHTML = `gitsim&nbsp;<span style='color: #4AF626;'>[${gitState.HEAD}]</span>&nbsp;%&nbsp;`
+	const diffCircle = diffWorkingStaging()?'inline':'none'
+	terminalPromptElement.innerHTML = `gitsim&nbsp;<span style='color: #4AF626;'>[${
+		gitState.HEAD
+	}<span style='color: red; display: ${diffCircle};'>&#x25CF;</span>]</span>&nbsp;%&nbsp;`
 }, 500)

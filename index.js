@@ -1,7 +1,9 @@
-import {addBranch} from './gitstate.js'
+import {addBranch, diffWorkingStaging} from './gitstate.js'
 import {updateGraph} from './utils/graphFunctions.js'
 
 updateGraph()
 setTimeout(() => {
-	addBranch()
+	// addBranch()
 }, 3000)
+
+diffWorkingStaging()

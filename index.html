@@ -19,14 +19,27 @@
 				<input id="terminal_input" autofocus type="text" />
 			</div>
 		</div>
-		<div id="git_areas">
-			<div id="working_area"></div>
-			<div id="staging_area"></div>
-			<div id="git_dir"></div>
+		<div id="git_areas" class="menu menu_right">
+			<div class="menu_button">&#9635;</div>
+			<div class="menu_content">
+				<div id="working_area">
+					<h3>Working Area:</h3>
+					<ul id="working_area_files"></ul>
+				</div>
+				<div id="staging_area">
+					<h3>Staging Area:</h3>
+					<ul id="staging_area_files"></ul>
+				</div>
+				<div id="git_dir">
+					<h3>Git Directory:</h3>
+					<ul id="git_dir_files"></ul>
+				</div>
+			</div>
 		</div>
 
 		<!-- Scripts -->
 		<script type="module" src="./index.js"></script>
+		<script type="module" src="./menus.js"></script>
 		<script type="module" src="./gitstate.js"></script>
 		<script type="module" src="./graph.js"></script>
 		<script type="module" src="./terminalHandler.js"></script>

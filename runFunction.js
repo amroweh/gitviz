@@ -1,14 +1,19 @@
 import {
+	addAllFromWorkingToIndex,
 	addBranch,
+	addFileFromWorkingToIndex,
 	changeHead,
+	diffFileWorkingStaging,
+	diffWorkingStaging,
 	findAllBranches,
 	findBranchByName,
 	findCommitById,
-	getCommitIdPointedByBranch_Name,
 	gitState,
-	removeBranchByName
+	removeBranchByName,
+	updateFileInStaging
 } from './gitstate.js'
 import {addToTerminalHistory, clearTerminal} from './terminalHandler.js'
+import {updateAreas, working_area_files} from './utils/areaFunctions.js'
 
 let initialized = false
 
@@ -17,11 +22,11 @@ export const run = cmd => {
 	const regex1 = new RegExp('^git checkout -b ')
 	const regex2 = new RegExp('^git checkout')
 	const regex3 = new RegExp('^git branch -d ')
-	const regex4 = new RegExp('git add .')
 	const regex5 = new RegExp('^git commit -m')
 	const regex6 = new RegExp('^git branch$')
 	const regex7 = new RegExp('^git branch')
 	const regex8 = new RegExp('git init')
+	const regex9 = new RegExp('^git add')
 
 	// Basic command cleaning
 	cmd = cmd.trim()
@@ -88,16 +93,6 @@ export const run = cmd => {
 		removeBranchByName(branchName)
 		return addToTerminalHistory(`branch ${branchName} deleted successfully`)
 	}
-	if (regex4.test(cmd)) {
-		console.log('regex 4 passed!')
-		// TO BE ADDED IN DIFFERENT WAY
-		// save changes from working area
-		// const changes = new Array(...workingAreaChanges)
-		// remove them from working area
-		// removeAllChangesFromWorkingArea()
-		// add them to staging area
-		// addAllChangesToStagingArea(changes)
-	}
 	if (regex5.test(cmd)) {
 		console.log('regex 5 passed!')
 		// // save changes from staging area
@@ -142,5 +137,23 @@ export const run = cmd => {
 			addBranch(branchName)
 			return addToTerminalHistory(`branch ${branchName} was created successfully`)
 		}
+	}
+	if (regex9.test(cmd)) {
+		console.log('regex 9 passed!')
+		// extract file name from this array
+		const change = words.length === 3 ? words[2] : null
+		if (!change) return addToTerminalHistory('please use "git add file_name"...')
+		if (!diffWorkingStaging())
+			return addToTerminalHistory('no working area changes to add to staging area. aborting...')
+		// For git add .
+		if (change === '.') {
+			addAllFromWorkingToIndex()
+		} else {
+			// check if there's a difference between file in working/staging
+			if (!diffFileWorkingStaging(change))
+				return addToTerminalHistory('file unchanged in working vs staging area. aborting...')
+			else addFileFromWorkingToIndex(change)
+		}
+		updateAreas()
 	}
 }

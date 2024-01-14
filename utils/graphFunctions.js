@@ -1,6 +1,7 @@
 import Graph from '../graph.js'
-import {findBranchByName, gitState} from '../gitstate.js'
+import {gitState} from '../gitstate.js'
 import {newCommitId} from './idGen.js'
+import {updateAreas} from './areaFunctions.js'
 
 const convertStateToGraph = () => {
 	const nodes = []
@@ -31,4 +32,7 @@ const convertStateToGraph = () => {
 	console.log({nodes, links, headId: headRef})
 	return {nodes, links, headId: headRef}
 }
-export const updateGraph = () => Graph(convertStateToGraph())
+export const updateGraph = () => {
+	Graph(convertStateToGraph())
+	updateAreas()
+}

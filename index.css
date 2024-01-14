@@ -52,3 +52,46 @@
 	display: flex;
 	align-items: center;
 }
+
+/* Git Areas */
+#git_areas {
+	background-color: grey;
+}
+
+#git_areas ul {
+	list-style: none;
+}
+
+#git_areas h3 {
+	margin-bottom: 1rem;
+}
+
+/* General Menu Styles */
+
+.menu {
+	position: absolute;
+	height: 100%;
+}
+
+.menu_content {
+	display: flex;
+	width: 100%;
+	flex-direction: column;
+	gap: 20px;
+	padding: 10px;
+	transition: width 500ms ease;
+	overflow: hidden;
+}
+
+.menu_right .menu_button {
+	position: absolute;
+	padding: 10px;
+	background-color: green;
+	top: 0;
+	left: -35px;
+}
+
+.menu_right {
+	top: 0;
+	right: 0;
+}
