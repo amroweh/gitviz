@@ -3,6 +3,7 @@ import {updateGraph} from './utils/graphFunctions.js'
 import {newCommitId, newTreeId, newBlobId} from './utils/idGen.js'
 
 export const gitState = {
+	initialized: false,
 	HEAD: 'myBranch',
 	Branches: [
 		{name: 'main', pointsTo: 5},
@@ -15,9 +16,21 @@ export const gitState = {
 			{id: newBlobId(), content: 'Hello from file 1'}
 		],
 		Trees: [
-			{id: newTreeId(), modeBits: 100644, type: 'blob', blobRef: 1, objectName: 'file1'}, // name or path?
-			{id: newTreeId(), modeBits: 100644, type: 'blob', blobRef: 2, objectName: 'file1'},
-			{id: newTreeId(), modeBits: 100644, type: 'tree', treeRef: 1, objectName: 'file1'} // what would this be for tree?
+			{
+				id: newTreeId(),
+				refs: [
+					{modeBits: 100644, type: 'blob', blobRef: 1, objectName: 'file1'}, // name or path?
+					{modeBits: 100644, type: 'blob', blobRef: 2, objectName: 'file1'}
+				]
+			},
+			{
+				id: newTreeId(),
+				refs: [
+					{modeBits: 100644, type: 'blob', blobRef: 1, objectName: 'file1'}, // name or path?
+					{modeBits: 100644, type: 'blob', blobRef: 2, objectName: 'file1'},
+					{modeBits: 100644, type: 'tree', treeRef: 1, objectName: 'file1'} // what would this be for tree?
+				]
+			}
 		],
 		Commits: [
 			{id: newCommitId(), message: 'initialcommit', tree: 3, parentCommit: null, author: 'ali', committer: 'ali'},

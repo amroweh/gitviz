@@ -15,8 +15,6 @@ import {
 import {addToTerminalHistory, clearTerminal} from './terminalHandler.js'
 import {updateAreas, working_area_files} from './utils/areaFunctions.js'
 
-let initialized = false
-
 export const run = cmd => {
 	// Regexes to match command against
 	const regex1 = new RegExp('^git checkout -b ')
@@ -36,9 +34,9 @@ export const run = cmd => {
 	const words = cmd.split(' ')
 
 	// Git still not initialized (no git init command performed yet)
-	if (!initialized) {
+	if (!gitState.initialized) {
 		if (regex8.test(cmd)) {
-			initialized = true
+			gitState.initialized = true
 			return addToTerminalHistory('Initialized empty Git repository in /')
 		} else return addToTerminalHistory(`fatal: not a git repository (or any of the parent directories): .git`)
 	}
@@ -95,6 +93,9 @@ export const run = cmd => {
 	}
 	if (regex5.test(cmd)) {
 		console.log('regex 5 passed!')
+		// 
+
+
 		// // save changes from staging area
 		// const changes = new Array(...stagingAreaChanges)
 		// // remove them from staging area

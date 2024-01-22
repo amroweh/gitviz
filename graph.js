@@ -5,7 +5,7 @@ const Graph = ({nodes, links, headId}) => {
 	// set the dimensions and margins of the graph
 	const margin = {top: 0, right: 0, bottom: 0, left: 0},
 		width = 1000 - margin.left - margin.right,
-		height = 800 - margin.top - margin.bottom,
+		height = 730 - margin.top - margin.bottom,
 		radius = 20,
 		textOffsetX = 1.2 * radius,
 		textOffsetY = 0,

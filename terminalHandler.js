@@ -41,8 +41,9 @@ export const clearTerminal = () => {
 }
 
 setInterval(() => {
-	const diffCircle = diffWorkingStaging()?'inline':'none'
-	terminalPromptElement.innerHTML = `gitsim&nbsp;<span style='color: #4AF626;'>[${
-		gitState.HEAD
-	}<span style='color: red; display: ${diffCircle};'>&#x25CF;</span>]</span>&nbsp;%&nbsp;`
+	if (!gitState.initialized) terminalPromptElement.innerHTML = `gitsim&nbsp;%&nbsp;`
+	else {
+		const diffCircle = diffWorkingStaging() ? 'inline' : 'none'
+		terminalPromptElement.innerHTML = `gitsim&nbsp;<span style='color: #4AF626;'>[${gitState.HEAD}<span style='color: red; display: ${diffCircle};'>&#x25CF;</span>]</span>&nbsp;%&nbsp;`
+	}
 }, 500)

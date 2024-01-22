@@ -4,6 +4,10 @@
 	margin: 0;
 }
 
+body{
+	overflow-x: hidden;
+}
+
 /* Graph */
 
 #graph {
@@ -76,11 +80,10 @@
 .menu_content {
 	display: flex;
 	width: 100%;
+	min-width: 300px;
 	flex-direction: column;
 	gap: 20px;
 	padding: 10px;
-	transition: width 500ms ease;
-	overflow: hidden;
 }
 
 .menu_right .menu_button {
@@ -89,9 +92,11 @@
 	background-color: green;
 	top: 0;
 	left: -35px;
+	cursor: pointer;
 }
 
 .menu_right {
 	top: 0;
 	right: 0;
+	transition: right 300ms ease;
 }

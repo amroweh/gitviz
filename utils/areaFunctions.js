@@ -1,7 +1,7 @@
 import {findBlobById, gitState} from '../gitstate.js'
 
 export const working_area_files = [
-	{filename: 'file1', content: 'Hello from file 1'},
+	{filename: 'file1', content: 'Hello from file 144'},
 	{filename: 'file2', content: 'Hello from file 2'}
 ]
 
