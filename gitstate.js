@@ -4,7 +4,7 @@ import {newCommitId, newTreeId, newBlobId} from './utils/idGen.js'
 
 export const gitState = {
 	initialized: false,
-	HEAD: 'myBranch',
+	HEAD: 1,
 	Branches: [
 		{name: 'main', pointsTo: 5},
 		{name: 'myBranch', pointsTo: 2}
@@ -43,7 +43,10 @@ export const gitState = {
 	Index: [
 		{modeBits: 100644, blobRef: 0, stageNumber: null, objectName: 'file1'},
 		{modeBits: 100644, blobRef: 1, stageNumber: null, objectName: 'file2'}
-	]
+	],
+	Config: {
+		userName: 'Default User' 
+	}
 }
 
 // Branch Functions
@@ -51,7 +54,7 @@ export const findAllBranches = () => {
 	return gitState.Branches
 }
 export const findBranchByName = name => {
-	if (name === null || name === undefined) throw new Error('No branch name specified. Aborting...')
+	if (isNotDefined(name)) throw new Error('No branch name specified. Aborting...')
 	return gitState.Branches.find(branch => branch.name === name)
 }
 export const addBranch = (name = 'branch', ref = gitState.HEAD) => {
@@ -62,7 +65,7 @@ export const addBranch = (name = 'branch', ref = gitState.HEAD) => {
 	updateGraph()
 }
 export const removeBranchByName = name => {
-	if (name === null || name === undefined) throw new Error('No branch name specified. Aborting...')
+	if (isNotDefined(name)) throw new Error('No branch name specified. Aborting...')
 	if (!findBranchByName(name)) throw new Error(`Branch ${name} does not exist. Aborting...`)
 	gitState.Branches = gitState.Branches.filter(branch => branch.name !== name)
 	updateGraph()
@@ -70,22 +73,25 @@ export const removeBranchByName = name => {
 
 // Commit Functions
 export const findCommitById = id => {
-	if (id === null || id === undefined) throw new Error('No commit id specified. Aborting...')
+	if (isNotDefined(id)) throw new Error('No commit id specified. Aborting...')
 	return gitState.Objects.Commits.find(commit => commit.id === id)
 }
 export const addCommit = (message, tree, parentCommit = null, author, committer) => {
-	gitState.Objects.Commits.push({id: newCommitId(), message, tree, parentCommit, author, committer})
+	if (isNotDefined(message)) throw new Error('No commit message specified. Aborting...')
+	const commitId = newCommitId()
+	gitState.Objects.Commits.push({id: commitId, message, tree, parentCommit, author, committer})
 	updateGraph()
+	return commitId
 }
 export const removeCommitById = id => {
-	if (id === null || id === undefined) throw new Error('No commit id specified. Aborting...')
+	if (isNotDefined(id)) throw new Error('No commit id specified. Aborting...')
 	gitState.Objects.Commits = gitState.Objects.Commits.filter(commit => commit.id !== id)
 	updateGraph()
 }
 
 // Blob Functions
 export const findBlobById = id => {
-	if (id === null || id === undefined) throw new Error('No blob id specified. Aborting...')
+	if (isNotDefined(id)) throw new Error('No blob id specified. Aborting...')
 	return gitState.Objects.Blobs.find(blob => blob.id === id)
 }
 
@@ -93,6 +99,27 @@ export const addBlob = blobContent => {
 	const blob = {id: newBlobId(), content: blobContent}
 	gitState.Objects.Blobs.push(blob)
 	return blob
+}
+
+// Tree Functions
+export const findTreeById = id => {
+	if (isNotDefined(id)) throw new Error('No tree id specified. Aborting...')
+	return gitState.Objects.Trees.find(tree => tree.id === id)
+}
+
+export const addTree = treeRefs => {
+	const tree = {id: newTreeId(), refs: []}
+	treeRefs.forEach(ref => {
+		tree.refs.push({
+			modeBits: ref.modeBits ?? 100644,
+			type: ref.type ?? 'blob',
+			blobRef: ref.blobRef,
+			objectName: ref.objectName
+		})
+	})
+	gitState.Objects.Trees.push(tree)
+	updateGraph()
+	return tree
 }
 
 // HEAD Functions
@@ -103,18 +130,34 @@ export const changeHead = ref => {
 }
 
 // Other Functions
-export const getNodeTypeById = id => {
-	if (id === null || id === undefined) throw new Error('No id specified. Aborting...')
-	if (findBranchById(id)) return 'branch'
-	if (findCommitById(id)) return 'commit'
+export const getNodeTypeById = ref => {
+	if (isNotDefined(ref)) throw new Error('No ref specified. Aborting...')
+	if (findBranchByName(ref)) return 'branch'
+	if (findCommitById(ref)) return 'commit'
 	return null
 }
 
 export const getCommitIdPointedByBranch_Name = branchName => {
-	if (branchName === null || branchName === undefined) throw new Error('No branch name specified. Aborting...')
+	if (isNotDefined(branchName)) throw new Error('No branch name specified. Aborting...')
 	const branch = findBranchByName(branchName)
 	if (!branch) throw new Error('Branch with this name not found')
 	else return branch.pointsTo
+}
+
+export const getCommitIdPointedByHead = () => {
+	// Case 1: HEAD is pointing to a branch
+	const branchPointedByHead = findBranchByName(gitState.HEAD)
+	if(isDefined(branchPointedByHead)) return branchPointedByHead.pointsTo
+	// Case 2: HEAD is pointing to commit
+	const commitPointedByHead = findCommitById(gitState.HEAD)
+	if (isDefined(commitPointedByHead)) return commitPointedByHead.id
+	// Case 3: HEAD is not pointing to anything
+	return null
+}
+
+export const getBranchPointedByHead = () => {
+	const branchPointedByHead = findBranchByName(gitState.HEAD)
+	if (isDefined(branchPointedByHead)) return branchPointedByHead
 }
 
 export const diffWorkingStaging = () => {
@@ -146,8 +189,6 @@ export const addFileToStaging = (modeBits = 100644, blobRef, stageNumber, object
 }
 
 export const updateFileInStaging = (modeBits = 100644, blobRef, stageNumber, objectName) => {
-	console.log('Index: ')
-	console.log(gitState)
 	const entry = findFileInStaging(objectName)
 	if (!entry) throw new Error('File does not exist in staging area')
 	else {
@@ -156,8 +197,6 @@ export const updateFileInStaging = (modeBits = 100644, blobRef, stageNumber, obj
 		entry.stageNumber = stageNumber
 		entry.objectName = objectName
 	}
-	console.log('Index_: ')
-	console.log(gitState)
 }
 
 export const diffFileWorkingStaging = filename => {
@@ -190,3 +229,7 @@ export const addAllFromWorkingToIndex = () => {
 		if (diffFileWorkingStaging(file.filename)) addFileFromWorkingToIndex(file.filename)
 	})
 }
+
+// Utility
+const isNotDefined = variable => variable === null || variable === undefined
+const isDefined = variable => !isNotDefined(variable)

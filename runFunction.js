@@ -1,7 +1,10 @@
 import {
 	addAllFromWorkingToIndex,
+	addBlob,
 	addBranch,
+	addCommit,
 	addFileFromWorkingToIndex,
+	addTree,
 	changeHead,
 	diffFileWorkingStaging,
 	diffWorkingStaging,
@@ -10,7 +13,10 @@ import {
 	findCommitById,
 	gitState,
 	removeBranchByName,
-	updateFileInStaging
+	updateFileInStaging,
+	getCommitIdPointedByHead,
+	getNodeTypeById,
+	getBranchPointedByHead
 } from './gitstate.js'
 import {addToTerminalHistory, clearTerminal} from './terminalHandler.js'
 import {updateAreas, working_area_files} from './utils/areaFunctions.js'
@@ -93,32 +99,22 @@ export const run = cmd => {
 	}
 	if (regex5.test(cmd)) {
 		console.log('regex 5 passed!')
-		// 
-
-
-		// // save changes from staging area
-		// const changes = new Array(...stagingAreaChanges)
-		// // remove them from staging area
-		// removeAllChangesFromStagingArea()
-		// // add them to git dir area
-		// addAllChangesToGitDirArea(changes)
-		// // create new node for the commit and add to graph
-		// const newId = randomId()
-		// addNewNode(newId, 'commit_' + newId, 'commit')
-		// // Link new commit to previous commit
-		// console.log(headId)
-		// if (headId === 0) addNewLink(headId, newId)
-		// else {
-		// 	const targetNodeFromSource = getTargetNodeFromSource(headId)
-		// 	console.log(targetNodeFromSource)
-		// 	addNewLink(newId, getTargetNodeFromSource(headId).id)
-		// 	// Link new commit to head
-		// 	linkNodeToHead(newId, false)
-		// 	// Remove previous link between head and previous commit/branch
-		// 	removeLink(headId, getTargetNodeFromSource(headId).id)
-		// }
-		// addToHistory(`new commit created successfully`)
-		// return
+		// extract commit message from this array
+		const commitMessage = words.length === 4 ? words[3] : null
+		if (!commitMessage || commitMessage === "") return addToTerminalHistory('please use the correct git commit syntax: git commit -m <message>')
+		// Using bolbs in index, create tree for these blobs
+		const tree = addTree(gitState.Index)
+		// Create commit using this tree
+		const commitIdPointedByHead = getCommitIdPointedByHead()
+		const commitId = addCommit(commitMessage, tree, commitIdPointedByHead, gitState.Config.userName)
+		// Check if HEAD points to branch, if so we need to point the branch to new commit & head to new branch
+		let branchPointedByHead = null
+		if(getNodeTypeById(gitState.HEAD)==='branch'){
+			branchPointedByHead = getBranchPointedByHead()
+			branchPointedByHead.pointsTo = commitId
+		} 
+		changeHead(branchPointedByHead.name)
+		console.log(gitState)
 	}
 	if (regex6.test(cmd)) {
 		console.log('regex 6 passed!')
@@ -143,7 +139,7 @@ export const run = cmd => {
 		console.log('regex 9 passed!')
 		// extract file name from this array
 		const change = words.length === 3 ? words[2] : null
-		if (!change) return addToTerminalHistory('please use "git add file_name"...')
+		if (!change) return addToTerminalHistory('please use "git add file_name" or "git add ."...')
 		if (!diffWorkingStaging())
 			return addToTerminalHistory('no working area changes to add to staging area. aborting...')
 		// For git add .
