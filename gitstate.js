@@ -12,24 +12,29 @@ export const gitState = {
 	Objects: {
 		Blobs: [
 			{id: newBlobId(), content: 'Hello from file 1'},
-			{id: newBlobId(), content: 'Hello from file 22'},
-			{id: newBlobId(), content: 'Hello from file 1'}
+			{id: newBlobId(), content: 'Hello from file 2'},
+			{id: newBlobId(), content: 'Hello from file 3'},
+			{id: newBlobId(), content: 'Hello from file 4'}
 		],
 		Trees: [
 			{
 				id: newTreeId(),
 				refs: [
-					{modeBits: 100644, type: 'blob', blobRef: 1, objectName: 'file1'}, // name or path?
-					{modeBits: 100644, type: 'blob', blobRef: 2, objectName: 'file1'}
+					{modeBits: 100644, type: 'blob', blobRef: 0, objectName: 'file1'},
+					{modeBits: 100644, type: 'blob', blobRef: 1, objectName: 'file2'}, // objectname = filename
+					{modeBits: 100644, type: 'tree', treeRef: 1, objectName: 'dir1'} // objectname = dirname
 				]
 			},
 			{
 				id: newTreeId(),
 				refs: [
-					{modeBits: 100644, type: 'blob', blobRef: 1, objectName: 'file1'}, // name or path?
-					{modeBits: 100644, type: 'blob', blobRef: 2, objectName: 'file1'},
-					{modeBits: 100644, type: 'tree', treeRef: 1, objectName: 'file1'} // what would this be for tree?
+					{modeBits: 100644, type: 'blob', blobRef: 2, objectName: 'file3'},
+					{modeBits: 100644, type: 'tree', treeRef: 2, objectName: 'dir2'}
 				]
+			},
+			{
+				id: newTreeId(),
+				refs: [{modeBits: 100644, type: 'blob', blobRef: 3, objectName: 'file4'}]
 			}
 		],
 		Commits: [
@@ -240,6 +245,40 @@ export const findCommonNodeAncestor = (commit1, commit2) => {
 	return findCommitById(setIntersection[0])
 }
 
+const diffArrays = (arr1, arr2) => {
+	const set1 = new Set(arr1)
+	const set2 = new Set(arr2)
+	const setIntersection = set1.filter(x => !set2.has(x))
+}
+
+const generateBlobArrayFromTree = tree => {
+	const blobs = []
+	tree.refs?.forEach(ref => {
+		if (ref.type === 'blob') blobs.push(ref)
+		else if (ref.type === 'tree') {
+			const subTree = findTreeById(ref.treeRef)
+			blobs.push(...generateBlobArrayFromTree(subTree))
+		}
+	})
+	return blobs
+}
+
+console.log(generateBlobArrayFromTree(gitState.Objects.Trees[0]))
+console.log(generateBlobArrayFromTree(gitState.Objects.Trees[1]))
+
+export const compareTrees = (tree1, tree2) => {
+	const blobArrayFromTree1 = generateBlobArrayFromTree(tree1)
+	const blobArrayFromTree2 = generateBlobArrayFromTree(tree2)
+	// How to compare the blobs & maintain the folder structure?
+
+	// Show differences to user
+
+	// Get result of merge conflicts from user
+
+	// Regenerate index
+}
+
 // Utility
-const isNotDefined = variable => variable === null || variable === undefined
-const isDefined = variable => !isNotDefined(variable)
+function isNotDefined(variable) {
+	variable === null || variable === undefined
+}

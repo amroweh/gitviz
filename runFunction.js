@@ -178,5 +178,9 @@ export const run = cmd => {
 			updateBranch(branchPointedByHead, null, commitToMerge.id)
 			changeHead(branchPointedByHead.name)
 		}
+		// Otherwise, we need to perform a three-way merge
+		else{
+			// find diff between common ancestor & each commit
+		}
 	}
 }
