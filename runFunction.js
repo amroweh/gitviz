@@ -14,9 +14,12 @@ import {
 	gitState,
 	removeBranchByName,
 	updateFileInStaging,
-	getCommitIdPointedByHead,
 	getNodeTypeById,
-	getBranchPointedByHead
+	getBranchPointedByHead,
+	getCommitPointedByHead,
+	generateNodeHistory,
+	findCommonNodeAncestor,
+	updateBranch
 } from './gitstate.js'
 import {addToTerminalHistory, clearTerminal} from './terminalHandler.js'
 import {updateAreas, working_area_files} from './utils/areaFunctions.js'
@@ -31,6 +34,7 @@ export const run = cmd => {
 	const regex7 = new RegExp('^git branch')
 	const regex8 = new RegExp('git init')
 	const regex9 = new RegExp('^git add')
+	const regex10 = new RegExp('^git merge')
 
 	// Basic command cleaning
 	cmd = cmd.trim()
@@ -101,20 +105,20 @@ export const run = cmd => {
 		console.log('regex 5 passed!')
 		// extract commit message from this array
 		const commitMessage = words.length === 4 ? words[3] : null
-		if (!commitMessage || commitMessage === "") return addToTerminalHistory('please use the correct git commit syntax: git commit -m <message>')
+		if (!commitMessage || commitMessage === '')
+			return addToTerminalHistory('please use the correct git commit syntax: git commit -m <message>')
 		// Using bolbs in index, create tree for these blobs
 		const tree = addTree(gitState.Index)
 		// Create commit using this tree
-		const commitIdPointedByHead = getCommitIdPointedByHead()
+		const commitIdPointedByHead = getCommitPointedByHead().id
 		const commitId = addCommit(commitMessage, tree, commitIdPointedByHead, gitState.Config.userName)
 		// Check if HEAD points to branch, if so we need to point the branch to new commit & head to new branch
 		let branchPointedByHead = null
-		if(getNodeTypeById(gitState.HEAD)==='branch'){
+		if (getNodeTypeById(gitState.HEAD) === 'branch') {
 			branchPointedByHead = getBranchPointedByHead()
 			branchPointedByHead.pointsTo = commitId
-		} 
-		changeHead(branchPointedByHead.name)
-		console.log(gitState)
+			changeHead(branchPointedByHead.name)
+		} else changeHead(commitId)
 	}
 	if (regex6.test(cmd)) {
 		console.log('regex 6 passed!')
@@ -152,5 +156,27 @@ export const run = cmd => {
 			else addFileFromWorkingToIndex(change)
 		}
 		updateAreas()
+	}
+	if (regex10.test(cmd)) {
+		console.log('regex 10 passed!')
+		// extract commit from branch/commit specified
+		let commitToMerge = words[2],
+			currentCommit = getCommitPointedByHead()
+		if (!commitToMerge) return addToTerminalHistory('please use "git merge commit_to_merge". Aborting...')
+		commitToMerge = findBranchByName(commitToMerge)
+			? findCommitById(findBranchByName(commitToMerge).pointsTo)
+			: findCommitById(+commitToMerge)
+		if (!commitToMerge) return addToTerminalHistory('This branch/commit does not exist. Aborting...')
+		// If current commit and commit to merge are the same
+		if (currentCommit === commitToMerge)
+			return addToTerminalHistory('You cannot merge two identical commits. Aborting...')
+		// Find common ancestor between currentCommit & commitToMerge
+		const commonNodeAncestor = findCommonNodeAncestor(currentCommit, commitToMerge)
+		// If the current branch head is an ancestor of the commit to merge, only need to fast forward
+		const branchPointedByHead = getBranchPointedByHead()
+		if ((commonNodeAncestor === currentCommit) && branchPointedByHead) {
+			updateBranch(branchPointedByHead, null, commitToMerge.id)
+			changeHead(branchPointedByHead.name)
+		}
 	}
 }

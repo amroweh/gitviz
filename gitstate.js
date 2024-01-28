@@ -45,7 +45,7 @@ export const gitState = {
 		{modeBits: 100644, blobRef: 1, stageNumber: null, objectName: 'file2'}
 	],
 	Config: {
-		userName: 'Default User' 
+		userName: 'Default User'
 	}
 }
 
@@ -68,6 +68,12 @@ export const removeBranchByName = name => {
 	if (isNotDefined(name)) throw new Error('No branch name specified. Aborting...')
 	if (!findBranchByName(name)) throw new Error(`Branch ${name} does not exist. Aborting...`)
 	gitState.Branches = gitState.Branches.filter(branch => branch.name !== name)
+	updateGraph()
+}
+
+export const updateBranch = (branch, newName, newCommitToPointTo) => {
+	branch.name = newName ?? branch.name
+	branch.pointsTo = newCommitToPointTo ?? branch.pointsTo
 	updateGraph()
 }
 
@@ -144,20 +150,11 @@ export const getCommitIdPointedByBranch_Name = branchName => {
 	else return branch.pointsTo
 }
 
-export const getCommitIdPointedByHead = () => {
-	// Case 1: HEAD is pointing to a branch
-	const branchPointedByHead = findBranchByName(gitState.HEAD)
-	if(isDefined(branchPointedByHead)) return branchPointedByHead.pointsTo
-	// Case 2: HEAD is pointing to commit
-	const commitPointedByHead = findCommitById(gitState.HEAD)
-	if (isDefined(commitPointedByHead)) return commitPointedByHead.id
-	// Case 3: HEAD is not pointing to anything
-	return null
-}
-
-export const getBranchPointedByHead = () => {
-	const branchPointedByHead = findBranchByName(gitState.HEAD)
-	if (isDefined(branchPointedByHead)) return branchPointedByHead
+export const getBranchPointedByHead = () => findBranchByName(gitState.HEAD)
+export const getCommitPointedByHead = () => {
+	const branchPointedByHead = getBranchPointedByHead()
+	if (branchPointedByHead) return findCommitById(branchPointedByHead.pointsTo)
+	else return findCommitById(gitState.HEAD)
 }
 
 export const diffWorkingStaging = () => {
@@ -175,13 +172,8 @@ export const diffWorkingStaging = () => {
 	return result
 }
 
-export const findFileInStaging = filename => {
-	return gitState.Index.find(entry => entry.objectName === filename)
-}
-
-export const findFileInWorking = filename => {
-	return working_area_files.find(entry => entry.filename === filename)
-}
+export const findFileInStaging = filename => gitState.Index.find(entry => entry.objectName === filename)
+export const findFileInWorking = filename => working_area_files.find(entry => entry.filename === filename)
 
 export const addFileToStaging = (modeBits = 100644, blobRef, stageNumber, objectName) => {
 	if (findFileInStaging(objectName)) throw new Error('File already exists in staging area')
@@ -228,6 +220,24 @@ export const addAllFromWorkingToIndex = () => {
 	working_area_files.forEach(file => {
 		if (diffFileWorkingStaging(file.filename)) addFileFromWorkingToIndex(file.filename)
 	})
+}
+
+// Tree traversals
+export const generateNodeHistory = commit => {
+	const history = [commit.id]
+	while (commit.parentCommit) {
+		history.push(commit.parentCommit)
+		commit = findCommitById(commit.parentCommit)
+	}
+	return history
+}
+
+export const findCommonNodeAncestor = (commit1, commit2) => {
+	const history1 = generateNodeHistory(commit1)
+	const history2 = generateNodeHistory(commit2)
+	var set2 = new Set(history2)
+	const setIntersection = [...new Set(history1)].filter(x => set2.has(x))
+	return findCommitById(setIntersection[0])
 }
 
 // Utility
