@@ -19,7 +19,8 @@ import {
 	getCommitPointedByHead,
 	generateNodeHistory,
 	findCommonNodeAncestor,
-	updateBranch
+	updateBranch,
+	compareTrees
 } from './gitstate.js'
 import {addToTerminalHistory, clearTerminal} from './terminalHandler.js'
 import {updateAreas, working_area_files} from './utils/areaFunctions.js'
@@ -181,6 +182,8 @@ export const run = cmd => {
 		// Otherwise, we need to perform a three-way merge
 		else{
 			// find diff between common ancestor & each commit
+			console.log('three way merge')
+			compareTrees(gitState.Objects.Trees)
 		}
 	}
 }

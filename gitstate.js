@@ -263,8 +263,21 @@ const generateBlobArrayFromTree = tree => {
 	return blobs
 }
 
-console.log(generateBlobArrayFromTree(gitState.Objects.Trees[0]))
-console.log(generateBlobArrayFromTree(gitState.Objects.Trees[1]))
+const diffTrees = (tree1, tree2) => {
+	const treeClone1 = structuredClone(tree1)
+	const treeClone2 = structuredClone(tree2)
+	treeClone1.refs?.forEach(ref1 => {
+		if(ref1.type === 'tree'){
+			// check if tree is in second tree
+			const treeIdInTree2 = tree2.refs.find(ref2 => ref2.treeId === ref1.treeId)
+			if(treeIdInTree2) {
+				// If it is there, remove from both
+				
+			}
+		}
+	});
+}
+diffTrees(gitState.Objects.Trees[0], gitState.Objects.Trees[1])
 
 export const compareTrees = (tree1, tree2) => {
 	const blobArrayFromTree1 = generateBlobArrayFromTree(tree1)
