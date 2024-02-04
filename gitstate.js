@@ -20,34 +20,34 @@ export const gitState = {
 			{
 				id: newTreeId(),
 				refs: [
-					{modeBits: 100644, type: 'blob', blobRef: 0, objectName: 'file1'},
-					{modeBits: 100644, type: 'blob', blobRef: 1, objectName: 'file2'}, // objectname = filename
-					{modeBits: 100644, type: 'tree', treeRef: 1, objectName: 'dir1'} // objectname = dirname
+					{modeBits: 100644, type: 'blob', ref: 0, objectName: 'file1'},
+					{modeBits: 100644, type: 'blob', ref: 1, objectName: 'file2'}, // objectname = filename
+					{modeBits: 100644, type: 'tree', ref: 1, objectName: 'dir1'} // objectname = dirname
 				]
 			},
 			{
 				id: newTreeId(),
 				refs: [
-					{modeBits: 100644, type: 'blob', blobRef: 2, objectName: 'file3'},
-					{modeBits: 100644, type: 'tree', treeRef: 2, objectName: 'dir2'}
+					{modeBits: 100644, type: 'blob', ref: 0, objectName: 'file3'},
+					{modeBits: 100644, type: 'tree', ref: 1, objectName: 'dir1'}
 				]
 			},
 			{
 				id: newTreeId(),
-				refs: [{modeBits: 100644, type: 'blob', blobRef: 3, objectName: 'file4'}]
+				refs: [{modeBits: 100644, type: 'blob', ref: 3, objectName: 'file4'}]
 			}
 		],
 		Commits: [
-			{id: newCommitId(), message: 'initialcommit', tree: 3, parentCommit: null, author: 'ali', committer: 'ali'},
-			{id: newCommitId(), message: '2nd commit', tree: 3, parentCommit: 1, author: 'ali', committer: 'ali'},
-			{id: newCommitId(), message: '3rd commit', tree: 4, parentCommit: 2, author: 'ali', committer: 'ali'},
-			{id: newCommitId(), message: '4th commit', tree: 4, parentCommit: 3, author: 'ali', committer: 'ali'},
-			{id: newCommitId(), message: '5th commit', tree: 5, parentCommit: 3, author: 'ali', committer: 'ali'}
+			{id: newCommitId(), message: 'initialcommit', tree: 3, parentCommits: null, author: 'ali', committer: 'ali'},
+			{id: newCommitId(), message: '2nd commit', tree: 3, parentCommits: [1], author: 'ali', committer: 'ali'},
+			{id: newCommitId(), message: '3rd commit', tree: 4, parentCommits: [2], author: 'ali', committer: 'ali'},
+			{id: newCommitId(), message: '4th commit', tree: 4, parentCommits: [3], author: 'ali', committer: 'ali'},
+			{id: newCommitId(), message: '5th commit', tree: 5, parentCommits: [3], author: 'ali', committer: 'ali'}
 		]
 	},
 	Index: [
-		{modeBits: 100644, blobRef: 0, stageNumber: null, objectName: 'file1'},
-		{modeBits: 100644, blobRef: 1, stageNumber: null, objectName: 'file2'}
+		{modeBits: 100644, ref: 0, stageNumber: null, objectName: 'file1'},
+		{modeBits: 100644, ref: 1, stageNumber: null, objectName: 'file2'}
 	],
 	Config: {
 		userName: 'Default User'
@@ -87,10 +87,10 @@ export const findCommitById = id => {
 	if (isNotDefined(id)) throw new Error('No commit id specified. Aborting...')
 	return gitState.Objects.Commits.find(commit => commit.id === id)
 }
-export const addCommit = (message, tree, parentCommit = null, author, committer) => {
+export const addCommit = (message, tree, parentCommits = [], author, committer) => {
 	if (isNotDefined(message)) throw new Error('No commit message specified. Aborting...')
 	const commitId = newCommitId()
-	gitState.Objects.Commits.push({id: commitId, message, tree, parentCommit, author, committer})
+	gitState.Objects.Commits.push({id: commitId, message, tree, parentCommits, author, committer})
 	updateGraph()
 	return commitId
 }
@@ -124,7 +124,7 @@ export const addTree = treeRefs => {
 		tree.refs.push({
 			modeBits: ref.modeBits ?? 100644,
 			type: ref.type ?? 'blob',
-			blobRef: ref.blobRef,
+			ref: ref.ref,
 			objectName: ref.objectName
 		})
 	})
@@ -170,7 +170,7 @@ export const diffWorkingStaging = () => {
 	let result = false
 	stagingAreaContent.forEach(entry => {
 		const objectName = entry.objectName
-		const content = findBlobById(entry.blobRef).content
+		const content = findBlobById(entry.ref).content
 		const workingDirEquivalent = working_area_files.find(entry => entry.filename == objectName)
 		if (!workingDirEquivalent || workingDirEquivalent.content !== content) result = true
 	})
@@ -180,17 +180,17 @@ export const diffWorkingStaging = () => {
 export const findFileInStaging = filename => gitState.Index.find(entry => entry.objectName === filename)
 export const findFileInWorking = filename => working_area_files.find(entry => entry.filename === filename)
 
-export const addFileToStaging = (modeBits = 100644, blobRef, stageNumber, objectName) => {
+export const addFileToStaging = (modeBits = 100644, ref, stageNumber, objectName) => {
 	if (findFileInStaging(objectName)) throw new Error('File already exists in staging area')
-	else gitState.Index.push({modeBits, blobRef: blobRef, stageNumber: null, objectName})
+	else gitState.Index.push({modeBits, ref: ref, stageNumber: null, objectName})
 }
 
-export const updateFileInStaging = (modeBits = 100644, blobRef, stageNumber, objectName) => {
+export const updateFileInStaging = (modeBits = 100644, ref, stageNumber, objectName) => {
 	const entry = findFileInStaging(objectName)
 	if (!entry) throw new Error('File does not exist in staging area')
 	else {
 		entry.modeBits = modeBits
-		entry.blobRef = blobRef
+		entry.ref = ref
 		entry.stageNumber = stageNumber
 		entry.objectName = objectName
 	}
@@ -204,7 +204,7 @@ export const diffFileWorkingStaging = filename => {
 	// In working but not in staging
 	if (!fileInStaging) return true
 	// In working and staging, need to check if content is different
-	else if (findBlobById(fileInStaging.blobRef).content !== fileToCheck.content) return true
+	else if (findBlobById(fileInStaging.ref).content !== fileToCheck.content) return true
 	return false
 }
 
@@ -228,18 +228,21 @@ export const addAllFromWorkingToIndex = () => {
 }
 
 // Tree traversals
-export const generateNodeHistory = commit => {
+export const generateNodeHistory = (commit, history = []) => {
+	if (commit.parentCommits == null) return
+	history.push(...commit.parentCommits)
+	commit.parentCommits.forEach(commitId => generateNodeHistory(findCommitById(commitId), history))
+}
+
+export const generateNodeHistoryWithCommit = commit => {
 	const history = [commit.id]
-	while (commit.parentCommit) {
-		history.push(commit.parentCommit)
-		commit = findCommitById(commit.parentCommit)
-	}
+	generateNodeHistory(commit, history)
 	return history
 }
 
 export const findCommonNodeAncestor = (commit1, commit2) => {
-	const history1 = generateNodeHistory(commit1)
-	const history2 = generateNodeHistory(commit2)
+	const history1 = generateNodeHistoryWithCommit(commit1)
+	const history2 = generateNodeHistoryWithCommit(commit2)
 	var set2 = new Set(history2)
 	const setIntersection = [...new Set(history1)].filter(x => set2.has(x))
 	return findCommitById(setIntersection[0])
@@ -256,28 +259,51 @@ const generateBlobArrayFromTree = tree => {
 	tree.refs?.forEach(ref => {
 		if (ref.type === 'blob') blobs.push(ref)
 		else if (ref.type === 'tree') {
-			const subTree = findTreeById(ref.treeRef)
+			const subTree = findTreeById(ref.ref)
 			blobs.push(...generateBlobArrayFromTree(subTree))
 		}
 	})
 	return blobs
 }
 
-const diffTrees = (tree1, tree2) => {
+export const diffTrees = (tree1, tree2) => {
 	const treeClone1 = structuredClone(tree1)
 	const treeClone2 = structuredClone(tree2)
-	treeClone1.refs?.forEach(ref1 => {
-		if(ref1.type === 'tree'){
-			// check if tree is in second tree
-			const treeIdInTree2 = tree2.refs.find(ref2 => ref2.treeId === ref1.treeId)
-			if(treeIdInTree2) {
-				// If it is there, remove from both
-				
-			}
+	const resultTree = {id: newTreeId(), refs: []}
+	let conflicts = {
+		renames: 0,
+		content: 0
+	}
+	console.log(treeClone1)
+	console.log(treeClone2)
+	treeClone1.refs?.forEach((ref1, index) => {
+		// check if type, object name, and ref are all equal in second tree -> identical tree -> remove in 1st tree
+		const ref1InTree2 = treeClone2.refs.find(
+			ref2 => ref2.ref === ref1.ref && ref2.objectName === ref1.objectName && ref2.type === ref1.type
+		)
+		if (ref1InTree2) console.log('found exact ref')
+		if (ref1InTree2) return treeClone1.refs.splice(index, 1)
+		// check if type and ref are equal, but object name is different -> rename only -> let user decide which name to use -> How?
+		const treeRef1RenamedInTree2 = treeClone2.refs.find(
+			ref2 => ref2.ref === ref1.ref && ref2.objectName !== ref1.objectName && ref2.type === ref1.type
+		)
+		if (treeRef1RenamedInTree2) {
+			conflicts.renames++
+			const promptMessage = `You have two different names for the same ${
+				treeRef1RenamedInTree2.type === 'blob' ? 'file' : 'directory'
+			}: ${ref1.objectName} vs ${treeRef1RenamedInTree2.objectName}. Please input the filename you wish to use: `
+			let promptInput = prompt(promptMessage)
+			treeRef1RenamedInTree2.objectName = promptInput
+			return treeClone1.refs.splice(index, 1)
 		}
-	});
+	})
+	// Add remaining stuff in trees 1 & 2
+	treeClone1.refs?.forEach(ref => resultTree.refs.push(ref))
+	treeClone2.refs?.forEach(ref => resultTree.refs.push(ref))
+	// Create new commit from result tree
+	addCommit('merge branches...', resultTree) // add branch names in commit message
+	console.log(resultTree)
 }
-diffTrees(gitState.Objects.Trees[0], gitState.Objects.Trees[1])
 
 export const compareTrees = (tree1, tree2) => {
 	const blobArrayFromTree1 = generateBlobArrayFromTree(tree1)

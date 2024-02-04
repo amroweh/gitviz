@@ -17,10 +17,10 @@ import {
 	getNodeTypeById,
 	getBranchPointedByHead,
 	getCommitPointedByHead,
-	generateNodeHistory,
 	findCommonNodeAncestor,
 	updateBranch,
-	compareTrees
+	compareTrees,
+	diffTrees
 } from './gitstate.js'
 import {addToTerminalHistory, clearTerminal} from './terminalHandler.js'
 import {updateAreas, working_area_files} from './utils/areaFunctions.js'
@@ -178,12 +178,13 @@ export const run = cmd => {
 		if ((commonNodeAncestor === currentCommit) && branchPointedByHead) {
 			updateBranch(branchPointedByHead, null, commitToMerge.id)
 			changeHead(branchPointedByHead.name)
+			return addToTerminalHistory('Fast-forward...')
 		}
 		// Otherwise, we need to perform a three-way merge
 		else{
 			// find diff between common ancestor & each commit
 			console.log('three way merge')
-			compareTrees(gitState.Objects.Trees)
+			diffTrees(gitState.Objects.Trees[0], gitState.Objects.Trees[1])
 		}
 	}
 }
