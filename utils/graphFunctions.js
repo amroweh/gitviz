@@ -12,7 +12,8 @@ const convertStateToGraph = () => {
 	gitState.Objects.Commits.forEach(commit => {
 		nodes.push({id: commit.id, name: commit.message, type: 'commit'})
 		if (commit.parentCommits !== null && commit.parentCommits !== undefined) {
-			commit.parentCommits.forEach(parentCommit => links.push({source: commit.id, target: parentCommit}))
+			const lineStyle = commit.parentCommits.length > 1 ? 'dotted' : 'regular'
+			commit.parentCommits.forEach(parentCommit => links.push({source: commit.id, target: parentCommit, lineStyle}))
 		}
 	})
 	// Create Nodes & Links for Branches

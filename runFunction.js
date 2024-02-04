@@ -19,7 +19,6 @@ import {
 	getCommitPointedByHead,
 	findCommonNodeAncestor,
 	updateBranch,
-	compareTrees,
 	diffTrees
 } from './gitstate.js'
 import {addToTerminalHistory, clearTerminal} from './terminalHandler.js'
@@ -112,7 +111,7 @@ export const run = cmd => {
 		const tree = addTree(gitState.Index)
 		// Create commit using this tree
 		const commitIdPointedByHead = getCommitPointedByHead().id
-		const commitId = addCommit(commitMessage, tree, commitIdPointedByHead, gitState.Config.userName)
+		const commitId = addCommit(commitMessage, tree, commitIdPointedByHead, gitState.Config.userName).id
 		// Check if HEAD points to branch, if so we need to point the branch to new commit & head to new branch
 		let branchPointedByHead = null
 		if (getNodeTypeById(gitState.HEAD) === 'branch') {
@@ -175,16 +174,23 @@ export const run = cmd => {
 		const commonNodeAncestor = findCommonNodeAncestor(currentCommit, commitToMerge)
 		// If the current branch head is an ancestor of the commit to merge, only need to fast forward
 		const branchPointedByHead = getBranchPointedByHead()
-		if ((commonNodeAncestor === currentCommit) && branchPointedByHead) {
+		if (commonNodeAncestor === currentCommit && branchPointedByHead) {
 			updateBranch(branchPointedByHead, null, commitToMerge.id)
 			changeHead(branchPointedByHead.name)
 			return addToTerminalHistory('Fast-forward...')
 		}
 		// Otherwise, we need to perform a three-way merge
-		else{
-			// find diff between common ancestor & each commit
-			console.log('three way merge')
-			diffTrees(gitState.Objects.Trees[0], gitState.Objects.Trees[1])
+		else {
+			// find diff between each commit and create a new commit from that
+			const resultTree = diffTrees(commitToMerge, currentCommit)
+			const branchToMerge = findBranchByName(words[2])
+			const currentBranch = getBranchPointedByHead()
+			const resultCommitMessage = `Merged branch ${currentBranch ? currentBranch.name : currentCommit} and ${
+				branchToMerge ? branchToMerge.name : commitToMerge.message
+			}`
+			const resultCommit = addCommit(resultCommitMessage, resultTree, [currentCommit.id, commitToMerge.id])
+			if (currentBranch) updateBranch(currentBranch, null, resultCommit.id)
+			return addToTerminalHistory(resultCommitMessage)
 		}
 	}
 }

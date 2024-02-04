@@ -38,11 +38,11 @@ export const gitState = {
 			}
 		],
 		Commits: [
-			{id: newCommitId(), message: 'initialcommit', tree: 3, parentCommits: null, author: 'ali', committer: 'ali'},
-			{id: newCommitId(), message: '2nd commit', tree: 3, parentCommits: [1], author: 'ali', committer: 'ali'},
-			{id: newCommitId(), message: '3rd commit', tree: 4, parentCommits: [2], author: 'ali', committer: 'ali'},
-			{id: newCommitId(), message: '4th commit', tree: 4, parentCommits: [3], author: 'ali', committer: 'ali'},
-			{id: newCommitId(), message: '5th commit', tree: 5, parentCommits: [3], author: 'ali', committer: 'ali'}
+			{id: newCommitId(), message: 'initialcommit', tree: 2, parentCommits: null, author: 'ali', committer: 'ali'},
+			{id: newCommitId(), message: '2nd commit', tree: 0, parentCommits: [1], author: 'ali', committer: 'ali'},
+			{id: newCommitId(), message: '3rd commit', tree: 0, parentCommits: [2], author: 'ali', committer: 'ali'},
+			{id: newCommitId(), message: '4th commit', tree: 1, parentCommits: [3], author: 'ali', committer: 'ali'},
+			{id: newCommitId(), message: '5th commit', tree: 1, parentCommits: [3], author: 'ali', committer: 'ali'}
 		]
 	},
 	Index: [
@@ -87,12 +87,18 @@ export const findCommitById = id => {
 	if (isNotDefined(id)) throw new Error('No commit id specified. Aborting...')
 	return gitState.Objects.Commits.find(commit => commit.id === id)
 }
-export const addCommit = (message, tree, parentCommits = [], author, committer) => {
+export const addCommit = (
+	message,
+	tree,
+	parentCommits = [],
+	author = gitState.Config.userName,
+	committer = gitState.Config.userName
+) => {
 	if (isNotDefined(message)) throw new Error('No commit message specified. Aborting...')
-	const commitId = newCommitId()
-	gitState.Objects.Commits.push({id: commitId, message, tree, parentCommits, author, committer})
+	const newCommit = {id: newCommitId(), message, tree, parentCommits, author, committer}
+	gitState.Objects.Commits.push(newCommit)
 	updateGraph()
-	return commitId
+	return newCommit
 }
 export const removeCommitById = id => {
 	if (isNotDefined(id)) throw new Error('No commit id specified. Aborting...')
@@ -248,12 +254,6 @@ export const findCommonNodeAncestor = (commit1, commit2) => {
 	return findCommitById(setIntersection[0])
 }
 
-const diffArrays = (arr1, arr2) => {
-	const set1 = new Set(arr1)
-	const set2 = new Set(arr2)
-	const setIntersection = set1.filter(x => !set2.has(x))
-}
-
 const generateBlobArrayFromTree = tree => {
 	const blobs = []
 	tree.refs?.forEach(ref => {
@@ -266,29 +266,23 @@ const generateBlobArrayFromTree = tree => {
 	return blobs
 }
 
-export const diffTrees = (tree1, tree2) => {
+export const diffTrees = (commit1, commit2) => {
+	const tree1 = findTreeById(commit1.tree)
+	const tree2 = findTreeById(commit2.tree)
 	const treeClone1 = structuredClone(tree1)
 	const treeClone2 = structuredClone(tree2)
 	const resultTree = {id: newTreeId(), refs: []}
-	let conflicts = {
-		renames: 0,
-		content: 0
-	}
-	console.log(treeClone1)
-	console.log(treeClone2)
 	treeClone1.refs?.forEach((ref1, index) => {
 		// check if type, object name, and ref are all equal in second tree -> identical tree -> remove in 1st tree
 		const ref1InTree2 = treeClone2.refs.find(
 			ref2 => ref2.ref === ref1.ref && ref2.objectName === ref1.objectName && ref2.type === ref1.type
 		)
-		if (ref1InTree2) console.log('found exact ref')
 		if (ref1InTree2) return treeClone1.refs.splice(index, 1)
-		// check if type and ref are equal, but object name is different -> rename only -> let user decide which name to use -> How?
+		// check if type and ref are equal, but object name is different -> rename only -> let user decide which name to use -> How? Currently Prompt
 		const treeRef1RenamedInTree2 = treeClone2.refs.find(
 			ref2 => ref2.ref === ref1.ref && ref2.objectName !== ref1.objectName && ref2.type === ref1.type
 		)
 		if (treeRef1RenamedInTree2) {
-			conflicts.renames++
 			const promptMessage = `You have two different names for the same ${
 				treeRef1RenamedInTree2.type === 'blob' ? 'file' : 'directory'
 			}: ${ref1.objectName} vs ${treeRef1RenamedInTree2.objectName}. Please input the filename you wish to use: `
@@ -301,20 +295,7 @@ export const diffTrees = (tree1, tree2) => {
 	treeClone1.refs?.forEach(ref => resultTree.refs.push(ref))
 	treeClone2.refs?.forEach(ref => resultTree.refs.push(ref))
 	// Create new commit from result tree
-	addCommit('merge branches...', resultTree) // add branch names in commit message
-	console.log(resultTree)
-}
-
-export const compareTrees = (tree1, tree2) => {
-	const blobArrayFromTree1 = generateBlobArrayFromTree(tree1)
-	const blobArrayFromTree2 = generateBlobArrayFromTree(tree2)
-	// How to compare the blobs & maintain the folder structure?
-
-	// Show differences to user
-
-	// Get result of merge conflicts from user
-
-	// Regenerate index
+	return resultTree
 }
 
 // Utility

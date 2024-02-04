@@ -78,6 +78,7 @@ const Graph = ({nodes, links, headId}) => {
 		.enter()
 		.append('line')
 		.style('stroke', '#aaa')
+		.style('stroke-dasharray', d => d.lineStyle === 'dotted' ? '5,5' : 'none')
 		.attr('marker-end', d =>
 			d.target.type === 'commit' ? 'url(#arrowhead_branch_commit)' : 'url(#arrowhead_branch_branch)'
 		)
