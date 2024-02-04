@@ -1,6 +1,5 @@
 import {
 	addAllFromWorkingToIndex,
-	addBlob,
 	addBranch,
 	addCommit,
 	addFileFromWorkingToIndex,
@@ -13,7 +12,6 @@ import {
 	findCommitById,
 	gitState,
 	removeBranchByName,
-	updateFileInStaging,
 	getNodeTypeById,
 	getBranchPointedByHead,
 	getCommitPointedByHead,
@@ -22,7 +20,7 @@ import {
 	diffTrees
 } from './gitstate.js'
 import {addToTerminalHistory, clearTerminal} from './terminalHandler.js'
-import {updateAreas, working_area_files} from './utils/areaFunctions.js'
+import {updateAreas} from './utils/areaFunctions.js'
 
 export const run = cmd => {
 	// Regexes to match command against
@@ -111,7 +109,7 @@ export const run = cmd => {
 		const tree = addTree(gitState.Index)
 		// Create commit using this tree
 		const commitIdPointedByHead = getCommitPointedByHead().id
-		const commitId = addCommit(commitMessage, tree, commitIdPointedByHead, gitState.Config.userName).id
+		const commitId = addCommit(commitMessage, tree, [commitIdPointedByHead], gitState.Config.userName).id
 		// Check if HEAD points to branch, if so we need to point the branch to new commit & head to new branch
 		let branchPointedByHead = null
 		if (getNodeTypeById(gitState.HEAD) === 'branch') {
@@ -185,7 +183,7 @@ export const run = cmd => {
 			const resultTree = diffTrees(commitToMerge, currentCommit)
 			const branchToMerge = findBranchByName(words[2])
 			const currentBranch = getBranchPointedByHead()
-			const resultCommitMessage = `Merged branch ${currentBranch ? currentBranch.name : currentCommit} and ${
+			const resultCommitMessage = `Merged ${currentBranch ? currentBranch.name : currentCommit.message} and ${
 				branchToMerge ? branchToMerge.name : commitToMerge.message
 			}`
 			const resultCommit = addCommit(resultCommitMessage, resultTree, [currentCommit.id, commitToMerge.id])

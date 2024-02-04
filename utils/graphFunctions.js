@@ -10,10 +10,10 @@ const convertStateToGraph = () => {
 	console.log(gitState)
 	// Create Nodes & Links for Commits
 	gitState.Objects.Commits.forEach(commit => {
-		nodes.push({id: commit.id, name: commit.message, type: 'commit'})
-		if (commit.parentCommits !== null && commit.parentCommits !== undefined) {
-			const lineStyle = commit.parentCommits.length > 1 ? 'dotted' : 'regular'
-			commit.parentCommits.forEach(parentCommit => links.push({source: commit.id, target: parentCommit, lineStyle}))
+		const isMergeCommit = commit.parentCommits?.length > 1
+		nodes.push({id: commit.id, name: commit.message, type: isMergeCommit ? 'mergecommit' : 'commit'})
+		if (commit.parentCommits) {
+			commit.parentCommits.forEach(parentCommit => links.push({source: commit.id, target: parentCommit, lineStyle: isMergeCommit ? 'dotted' : 'regular'}))
 		}
 	})
 	// Create Nodes & Links for Branches

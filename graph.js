@@ -78,9 +78,11 @@ const Graph = ({nodes, links, headId}) => {
 		.enter()
 		.append('line')
 		.style('stroke', '#aaa')
-		.style('stroke-dasharray', d => d.lineStyle === 'dotted' ? '5,5' : 'none')
+		.style('stroke-dasharray', d => (d.lineStyle === 'dotted' ? '5,5' : 'none'))
 		.attr('marker-end', d =>
-			d.target.type === 'commit' ? 'url(#arrowhead_branch_commit)' : 'url(#arrowhead_branch_branch)'
+			d.target.type === 'commit' || d.target.type === 'mergecommit'
+				? 'url(#arrowhead_branch_commit)'
+				: 'url(#arrowhead_branch_branch)'
 		)
 
 	// Initialize the nodes
@@ -89,12 +91,13 @@ const Graph = ({nodes, links, headId}) => {
 		.data(nodes)
 		.enter()
 		.append('circle')
-		.attr('r', d => (d.type === 'commit' ? radius / 2 : radius))
+		.attr('r', d => (d.type === 'commit' || d.type === 'mergecommit' ? radius / 2 : radius))
 		.style('fill', d => {
-			if (d.type === 'commit') return 'orange'
+			if (d.type === 'commit' || d.type === 'mergecommit') return 'orange'
 			else if (d.type === 'branch') return '#69b3a2'
 			else if (d.type === 'head') return 'red'
 		})
+		.style('stroke', d => d.type === 'mergecommit' && '#c36b00')
 		.style('stroke-width', '4px')
 		.call(
 			d3
