@@ -1,10 +1,16 @@
+const getGraphLayout = () => {
+	const graphWidth = window.innerWidth
+	const graphHeight = window.innerHeight - document.querySelector('#terminal').getBoundingClientRect().height
+	return {graphWidth, graphHeight}
+}
+
 export default {
 	// Graph Styles
 	// main layout
-	GRAPH_HEIGHT: 700,
-	GRAPH_WIDTH: 1000,
+	GRAPH_WIDTH: getGraphLayout().graphWidth,
+	GRAPH_HEIGHT: getGraphLayout().graphHeight,
 	// node styles
-	NODE_SIZE_COMMIT: 10,
-	NODE_SIZE_BRANCH: 10,
-	NODE_SIZE_HEAD: 10
+	NODE_RADIUS_COMMIT: 10,
+	NODE_RADIUS_BRANCH: 20,
+	NODE_RADIUS_HEAD: 20
 }

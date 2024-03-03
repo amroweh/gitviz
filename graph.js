@@ -7,7 +7,7 @@ const Graph = ({nodes, links, headId}) => {
 	const margin = {top: 0, right: 0, bottom: 0, left: 0},
 		width = settings.GRAPH_WIDTH - margin.left - margin.right,
 		height = settings.GRAPH_HEIGHT - margin.top - margin.bottom,
-		radius = 20,
+		radius = settings.NODE_RADIUS_BRANCH,
 		textOffsetX = 1.2 * radius,
 		textOffsetY = 0,
 		labelTextOffsetX = -radius - 50,
@@ -49,7 +49,7 @@ const Graph = ({nodes, links, headId}) => {
 		.append('defs')
 		.append('marker')
 		.attr('id', 'arrowhead_branch_branch')
-		.attr('refX', radius + 10) // Add marker width to radius
+		.attr('refX', settings.NODE_RADIUS_BRANCH + 10) // Add marker width to radius
 		.attr('refY', 3.5)
 		.attr('orient', 'auto')
 		.attr('markerWidth', 10)
@@ -63,7 +63,7 @@ const Graph = ({nodes, links, headId}) => {
 		.append('defs')
 		.append('marker')
 		.attr('id', 'arrowhead_branch_commit')
-		.attr('refX', radius / 2 + 10) // Add marker width to radius
+		.attr('refX', settings.NODE_RADIUS_COMMIT + 10) // Add marker width to radius
 		.attr('refY', 3.5)
 		.attr('orient', 'auto')
 		.attr('markerWidth', 10)
@@ -92,7 +92,11 @@ const Graph = ({nodes, links, headId}) => {
 		.data(nodes)
 		.enter()
 		.append('circle')
-		.attr('r', d => (d.type === 'commit' || d.type === 'mergecommit' ? radius / 2 : radius))
+		.attr('r', d => {
+			if (d.type === 'commit' || d.type === 'mergecommit') return settings.NODE_RADIUS_COMMIT
+			else if (d.type === 'branch') return settings.NODE_RADIUS_BRANCH
+			else if (d.type === 'head') return settings.NODE_RADIUS_HEAD
+		})
 		.style('fill', d => {
 			if (d.type === 'commit' || d.type === 'mergecommit') return 'orange'
 			else if (d.type === 'branch') return '#69b3a2'
