@@ -1,11 +1,12 @@
 import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7/+esm'
 import {dragstarted, dragged, dragended} from '../utils/dragFunctions.js'
+import settings from './settings.js'
 
 const Graph = ({nodes, links, headId}) => {
 	// set the dimensions and margins of the graph
 	const margin = {top: 0, right: 0, bottom: 0, left: 0},
-		width = 1000 - margin.left - margin.right,
-		height = 730 - margin.top - margin.bottom,
+		width = settings.GRAPH_WIDTH - margin.left - margin.right,
+		height = settings.GRAPH_HEIGHT - margin.top - margin.bottom,
 		radius = 20,
 		textOffsetX = 1.2 * radius,
 		textOffsetY = 0,
@@ -21,7 +22,7 @@ const Graph = ({nodes, links, headId}) => {
 	const svg = d3
 		.select('#graph')
 		.append('svg')
-		.style('border', '1px solid blue') // TO BE REMOVED LATER
+		// .style('border', '1px solid blue') // TO BE REMOVED LATER
 		.style('background-color', 'white') // TO BE REMOVED LATER
 		.attr('width', width + margin.left + margin.right)
 		.attr('height', height + margin.top + margin.bottom)
