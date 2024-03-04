@@ -96,13 +96,13 @@ const Graph = ({nodes, links}) => {
 			else if (d.type === 'head') return settings.NODE_RADIUS_HEAD
 		})
 		.style('fill', d => {
-			if (d.type === 'commit' || d.type === 'mergecommit') return 'orange'
-			else if (d.type === 'branch') return '#69b3a2'
-			else if (d.type === 'head') return 'red'
+			if (d.type === 'commit' || d.type === 'mergecommit') return settings.NODE_COLOR_COMMIT
+			else if (d.type === 'branch') return settings.NODE_COLOR_BRANCH
+			else if (d.type === 'head') return settings.NODE_COLOR_HEAD
 		})
 		.style('stroke', d => {
 			if (d.type === 'mergecommit') return '#c36b00'
-			if (d.type === 'head') return 'black'
+			if (d.type === 'head') return settings.NODE_BORDER_COLOR_HEAD
 		})
 		.style('stroke-width', '3px')
 		.call(
@@ -121,6 +121,7 @@ const Graph = ({nodes, links}) => {
 		.append('text')
 		.attr('class', 'branchNameText')
 		.text(d => d.name) // adds asterisk to head branch
+		.attr('fill', d => d.type === 'head' && settings.NODE_BORDER_COLOR_HEAD)
 		.attr('transform', function (d) {
 			if (d.type === 'head') return 'translate(-' + this.getBBox().width / 2 + ' +' + this.getBBox().height / 4 + ')'
 		})
