@@ -6,15 +6,13 @@
 
 body {
 	overflow-x: hidden;
-	background-color: rgb(233, 233, 233);
 }
 
 /* Graph */
 
 #graph {
 	text-align: center;
-	margin: auto;
-	/* min-height: 73.5vh; TO BE REMOVED! */
+	border: 5px solid rgb(205, 205, 205);
 }
 
 /* Terminal */
@@ -30,8 +28,6 @@ body {
 	padding: 3px 5px;
 	height: 200px;
 	width: 100%;
-	border-top-left-radius: 5px;
-	border-top-right-radius: 5px;
 }
 
 #terminal_history_section {

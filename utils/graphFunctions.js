@@ -13,7 +13,9 @@ const convertStateToGraph = () => {
 		const isMergeCommit = commit.parentCommits?.length > 1
 		nodes.push({id: commit.id, name: commit.message, type: isMergeCommit ? 'mergecommit' : 'commit'})
 		if (commit.parentCommits) {
-			commit.parentCommits.forEach(parentCommit => links.push({source: commit.id, target: parentCommit, lineStyle: isMergeCommit ? 'dotted' : 'regular'}))
+			commit.parentCommits.forEach(parentCommit =>
+				links.push({source: commit.id, target: parentCommit, lineStyle: isMergeCommit ? 'dotted' : 'regular'})
+			)
 		}
 	})
 	// Create Nodes & Links for Branches
@@ -25,7 +27,7 @@ const convertStateToGraph = () => {
 	})
 	// Create Nodes & Links for HEAD
 	const headId = newCommitId()
-	nodes.push({id: headId, name: 'HEAD', type: 'head'})
+	nodes.push({id: headId, name: 'H', type: 'head'})
 	links.push({
 		source: headId,
 		target: Number.isInteger(headRef) ? headRef : nodes.find(branch => branch.name === headRef).id

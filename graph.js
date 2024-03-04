@@ -2,11 +2,11 @@ import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7/+esm'
 import {dragstarted, dragged, dragended} from '../utils/dragFunctions.js'
 import settings from './settings.js'
 
-const Graph = ({nodes, links, headId}) => {
+const Graph = ({nodes, links}) => {
 	// set the dimensions and margins of the graph
 	const margin = {top: 0, right: 0, bottom: 0, left: 0},
 		width = settings.GRAPH_WIDTH - margin.left - margin.right,
-		height = settings.GRAPH_HEIGHT - margin.top - margin.bottom,
+		height = settings.GRAPH_HEIGHT - margin.top - margin.bottom - settings.GRAPH_BORDER_SIZE,
 		radius = settings.NODE_RADIUS_BRANCH,
 		textOffsetX = 1.2 * radius,
 		textOffsetY = 0,
@@ -22,8 +22,6 @@ const Graph = ({nodes, links, headId}) => {
 	const svg = d3
 		.select('#graph')
 		.append('svg')
-		// .style('border', '1px solid blue') // TO BE REMOVED LATER
-		.style('background-color', 'white') // TO BE REMOVED LATER
 		.attr('width', width + margin.left + margin.right)
 		.attr('height', height + margin.top + margin.bottom)
 		.append('g')
@@ -102,8 +100,11 @@ const Graph = ({nodes, links, headId}) => {
 			else if (d.type === 'branch') return '#69b3a2'
 			else if (d.type === 'head') return 'red'
 		})
-		.style('stroke', d => d.type === 'mergecommit' && '#c36b00')
-		.style('stroke-width', '4px')
+		.style('stroke', d => {
+			if (d.type === 'mergecommit') return '#c36b00'
+			if (d.type === 'head') return 'black'
+		})
+		.style('stroke-width', '3px')
 		.call(
 			d3
 				.drag()
@@ -120,21 +121,9 @@ const Graph = ({nodes, links, headId}) => {
 		.append('text')
 		.attr('class', 'branchNameText')
 		.text(d => d.name) // adds asterisk to head branch
-
-	// Add the labels
-	// const labelBox = branchContainer
-	// 	.append('rect')
-	// 	.attr('width', d => (d.id === headId ? 55 : 0))
-	// 	.attr('height', d => (d.id === headId ? 25 : 0))
-	// 	.style('fill', 'purple')
-	// 	.style('rx', 3)
-	// 	.style('ry', 3)
-
-	// const labelText = branchContainer
-	// 	.append('text')
-	// 	.text(d => (d.id === headId ? 'HEAD' : null))
-	// 	.style('fill', d => (d.id === headId ? '#CF9FFF' : null))
-	// 	.attr('class', 'labelText')
+		.attr('transform', function (d) {
+			if (d.type === 'head') return 'translate(-' + this.getBBox().width / 2 + ' +' + this.getBBox().height / 4 + ')'
+		})
 
 	// This function is run at each iteration of the force algorithm, updating the nodes position.
 	// note: d is provided by the simulation
@@ -146,7 +135,15 @@ const Graph = ({nodes, links, headId}) => {
 			.attr('y2', d => d.target.y)
 
 		node.attr('cx', d => d.x).attr('cy', d => d.y)
-		branchNameText.attr('x', d => d.x + textOffsetX).attr('y', d => d.y + textOffsetY)
+		branchNameText
+			.attr('x', d => {
+				if (d.type === 'head') return d.x
+				return d.x + textOffsetX
+			})
+			.attr('y', d => {
+				if (d.type === 'head') return d.y
+				return d.y + textOffsetY
+			})
 		// labelText.attr('x', d => d.x + labelTextOffsetX).attr('y', d => d.y + labelTextOffsetY)
 		// labelBox.attr('x', d => d.x + labelRectOffsetX).attr('y', d => d.y + labelRectOffsetY)
 	}
