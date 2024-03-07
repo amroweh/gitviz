@@ -1,7 +1,7 @@
 import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7/+esm'
 import {dragstarted, dragged, dragended} from '../utils/dragFunctions.js'
 import settings from './settings.js'
-import {getNodeDimensions, getTextPosition} from './utils/shapeFunctions.js'
+import {createSvgArrowHead, getLinkColour, getNodeDimensions, getTextPosition} from './utils/shapeFunctions.js'
 
 const Graph = ({nodes, links}) => {
 	// set the dimensions and margins of the graph
@@ -39,33 +39,11 @@ const Graph = ({nodes, links}) => {
 		.on('tick', ticked)
 		.on('end', ticked)
 
-	// setup arrowhead marker for links between 2 branches
-	svg
-		.append('defs')
-		.append('marker')
-		.attr('id', 'arrowhead_branch_branch')
-		.attr('refX', settings.NODE_WIDTH_BRANCH + 10) // Add marker width to radius
-		.attr('refY', 3.5)
-		.attr('orient', 'auto')
-		.attr('markerWidth', 10)
-		.attr('markerHeight', 7)
-		.append('svg:polygon')
-		.attr('points', '0 0, 10 3.5, 0 7')
-		.attr('fill', 'black')
-
-	// setup arrowhead marker for links between branch and commit
-	svg
-		.append('defs')
-		.append('marker')
-		.attr('id', 'arrowhead_branch_commit')
-		.attr('refX', settings.NODE_RADIUS_COMMIT + 10) // Add marker width to radius
-		.attr('refY', 3.5)
-		.attr('orient', 'auto')
-		.attr('markerWidth', 10)
-		.attr('markerHeight', 7)
-		.append('svg:polygon')
-		.attr('points', '0 0, 10 3.5, 0 7')
-		.attr('fill', 'black')
+	// setup arrowheads
+	createSvgArrowHead(svg, 'arrowhead_commit', settings.NODE_RADIUS_COMMIT, settings.LINK_COLOUR_C_C)
+	createSvgArrowHead(svg, 'arrowhead_branch', settings.NODE_HEIGHT_BRANCH - 10.5, settings.LINK_COLOUR_B_C)
+	createSvgArrowHead(svg, 'arrowhead_head_commit', settings.NODE_RADIUS_COMMIT, settings.LINK_COLOUR_H_CB)
+	createSvgArrowHead(svg, 'arrowhead_head_branch', settings.NODE_HEIGHT_BRANCH - 3.5, settings.LINK_COLOUR_H_CB)
 
 	// Initialize the links
 	const link = svg
@@ -73,13 +51,16 @@ const Graph = ({nodes, links}) => {
 		.data(links)
 		.enter()
 		.append('line')
-		.style('stroke', '#aaa')
+		.style('stroke', function (d) {
+			return getLinkColour(d.source.type, d.target.type)
+		})
 		.style('stroke-dasharray', d => (d.lineStyle === 'dotted' ? '5,5' : 'none'))
-		.attr('marker-end', d =>
-			d.target.type === 'commit' || d.target.type === 'mergecommit'
-				? 'url(#arrowhead_branch_commit)'
-				: 'url(#arrowhead_branch_branch)'
-		)
+		.attr('marker-end', d => {
+			if (d.source.type === 'commit' || d.source.type === 'mergecommit') return 'url(#arrowhead_commit)'
+			if (d.source.type === 'branch') return 'url(#arrowhead_branch)'
+			if (d.source.type === 'head' && d.target.type === 'commit') return 'url(#arrowhead_head_commit)'
+			if (d.source.type === 'head' && d.target.type === 'branch') return 'url(#arrowhead_head_branch)'
+		})
 
 	// Initialize the nodes
 	const node = svg

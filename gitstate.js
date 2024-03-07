@@ -4,7 +4,7 @@ import {newCommitId, newTreeId, newBlobId} from './utils/idGen.js'
 
 export const gitState = {
 	initialized: false,
-	HEAD: 1,
+	HEAD: 2,
 	Branches: [
 		{name: 'main', pointsTo: 5},
 		{name: 'myBranch', pointsTo: 2}

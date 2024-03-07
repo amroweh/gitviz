@@ -21,6 +21,21 @@ export const createNode_Circle = (type, radius, fill, stroke, strokeWidth) => {
 	return circle
 }
 
+export const createSvgArrowHead = (svg, id, refX, fill) => {
+	svg
+		.append('defs')
+		.append('marker')
+		.attr('id', id)
+		.attr('refX', refX)
+		.attr('refY', 3.5)
+		.attr('orient', 'auto')
+		.attr('markerWidth', 10)
+		.attr('markerHeight', 7)
+		.append('svg:polygon')
+		.attr('points', '0 0, 10 3.5, 0 7')
+		.attr('fill', fill)
+}
+
 export const getNodeDimensions = type => {
 	if (type === 'branch' || type === 'head')
 		return {
@@ -45,4 +60,10 @@ export const getTextPosition = type => {
 			x: settings.NODE_RADIUS_COMMIT,
 			y: settings.NODE_RADIUS_COMMIT
 		}
+}
+
+export const getLinkColour = (from, to) => {
+	if (from === 'commit' && to === 'commit') return settings.LINK_COLOUR_C_C
+	if (from === 'head' || to === 'head') return settings.LINK_COLOUR_H_CB
+	if (from === 'branch' || to === 'branch') return settings.LINK_COLOUR_B_C
 }
