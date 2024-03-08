@@ -22,7 +22,7 @@ export default {
 	BRANCH_LABEL_MAX_LENGTH: 6,
 	COMMIT_LABEL_MAX_LENGTH: 10,
 	// Link styles
-	LINK_COLOUR_C_C: 'black',
+	LINK_COLOUR_C_C: '#bf9950',
 	LINK_COLOUR_B_C: '#68B3A2',
 	LINK_COLOUR_H_CB: '#8B0000'
 }
