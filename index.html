@@ -8,7 +8,14 @@
 	</head>
 	<body>
 		<!-- Components -->
-		<div id="graph"></div>
+		<div id="graph">
+			<div id="zoom_controls">
+				<div class="zoom_btn" id="zoom_in_btn">+</div>
+				<div class="zoom_btn" id="zoom_out_btn">-</div>
+				<div class="zoom_btn" id="zoom_reset_btn">&#8634;</div>
+				<div class="zoom_btn" id="zoom_far_btn">&#8902;</div>
+			</div>
+		</div>
 		<div id="terminal">
 			<div id="terminal_history_section">
 				<div id="terminal_history"></div>
@@ -39,6 +46,7 @@
 
 		<!-- Scripts -->
 		<script type="module" src="./settings.js"></script>
+		<script type="module" src="./zoom.js"></script>
 		<script type="module" src="./menus.js"></script>
 		<script type="module" src="./gitstate.js"></script>
 		<script type="module" src="./graph.js"></script>

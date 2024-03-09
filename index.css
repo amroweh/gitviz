@@ -13,6 +13,30 @@ body {
 #graph {
 	text-align: center;
 	border: 5px solid rgb(205, 205, 205);
+	position: relative;
+}
+
+#zoom_controls {
+	font-size: larger;
+	position: absolute;
+	z-index: 1;
+	display: flex;
+	flex-direction: column-reverse;
+	bottom: 20px;
+	left: 20px;
+}
+
+.zoom_btn {
+	background-color: white;
+	border: 1px solid grey;
+	padding: 5px 10px;
+	cursor: pointer;
+	border-radius: 2px;
+	margin-bottom: 5px;
+}
+
+.zoom_btn:hover {
+	background-color: rgb(232, 240, 243);
 }
 
 /* Terminal */

@@ -12,7 +12,7 @@ const Graph = ({nodes, links}) => {
 		textOffsetX = 1.2 * radius,
 		textOffsetY = 0
 
-	// append the svg object to the Box component with the dimensions defined above (removes if already there)
+	// append the svg object to the Box component with the dimensions defined above (removes first if already exists)
 	if (!d3.select('#graph').select('svg').empty()) {
 		d3.select('#graph').select('svg').remove()
 	}
@@ -22,6 +22,7 @@ const Graph = ({nodes, links}) => {
 		.attr('width', width + margin.left + margin.right)
 		.attr('height', height + margin.top + margin.bottom)
 		.append('g')
+		.attr('id', 'zoomBox')
 		.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 
 	// Let's list the force we wanna apply on the network
