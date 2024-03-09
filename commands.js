@@ -19,7 +19,7 @@ import {
 	updateBranch,
 	diffTrees
 } from './gitstate.js'
-import {addToTerminalHistory, clearTerminal} from './terminalHandler.js'
+import {addToTerminalHistory, clearTerminal} from './terminal.js'
 import {updateAreas} from './utils/areaFunctions.js'
 
 export const run = cmd => {

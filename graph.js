@@ -56,6 +56,7 @@ const Graph = ({nodes, links}) => {
 			return getLinkColour(d.source.type, d.target.type)
 		})
 		.style('stroke-dasharray', d => (d.lineStyle === 'dotted' ? '5,5' : 'none'))
+		.style('filter', d => d.withShadow && `drop-shadow(0px 0px 5px ${settings.LINK_SHADOW_COLOR})`)
 		.attr('marker-end', d => {
 			if (d.source.type === 'commit' || d.source.type === 'mergecommit') return 'url(#arrowhead_commit)'
 			if (d.source.type === 'branch') return 'url(#arrowhead_branch)'
@@ -83,6 +84,7 @@ const Graph = ({nodes, links}) => {
 		.style('stroke-width', '3px')
 		.style('rx', d => (d.type === 'commit' || d.type === 'mergecommit') && 50)
 		.style('ry', d => (d.type === 'commit' || d.type === 'mergecommit') && 30)
+		.style('filter', d => d.withShadow && `drop-shadow(0px 0px 5px ${settings.NODE_SHADOW_COLOR})`)
 		.attr('transform', d => {
 			if (d.type === 'commit' || d.type === 'mergecommit')
 				return 'translate(-' + settings.NODE_RADIUS_COMMIT / 2 + ' -' + settings.NODE_RADIUS_COMMIT / 2 + ')'

@@ -1,5 +1,5 @@
 import {diffWorkingStaging, gitState} from './gitstate.js'
-import {run} from './runFunction.js'
+import {run} from './commands.js'
 
 const terminalInputElement = document.querySelector('#terminal_input')
 const terminalHistoryElement = document.querySelector('#terminal_history')

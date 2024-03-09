@@ -1,5 +1,11 @@
 import Graph from '../graph.js'
-import {gitState} from '../gitstate.js'
+import {
+	findBranchByName,
+	findCommitById,
+	generateNodeHistoryWithCommit,
+	getNodeTypeById,
+	gitState
+} from '../gitstate.js'
 import {newCommitId} from './idGen.js'
 import {updateAreas} from './areaFunctions.js'
 
@@ -7,14 +13,25 @@ const convertStateToGraph = () => {
 	const nodes = []
 	const links = []
 	const headRef = gitState.HEAD
-	console.log(gitState)
+	const headNode = getNodeTypeById(headRef) === 'branch' ? findBranchByName(headRef) : findCommitById(headRef)
+	const headHistory = generateNodeHistoryWithCommit(headNode)
 	// Create Nodes & Links for Commits
 	gitState.Objects.Commits.forEach(commit => {
 		const isMergeCommit = commit.parentCommits?.length > 1
-		nodes.push({id: commit.id, name: commit.message, type: isMergeCommit ? 'mergecommit' : 'commit'})
+		nodes.push({
+			id: commit.id,
+			name: commit.message,
+			type: isMergeCommit ? 'mergecommit' : 'commit',
+			withShadow: headHistory.includes(commit.id)
+		})
 		if (commit.parentCommits) {
 			commit.parentCommits.forEach(parentCommit =>
-				links.push({source: commit.id, target: parentCommit, lineStyle: isMergeCommit ? 'dotted' : 'regular'})
+				links.push({
+					source: commit.id,
+					target: parentCommit,
+					lineStyle: isMergeCommit ? 'dotted' : 'regular',
+					withShadow: headHistory.includes(commit.id) && headHistory.includes(parentCommit)
+				})
 			)
 		}
 	})
