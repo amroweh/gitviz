@@ -113,6 +113,7 @@ const Graph = ({nodes, links}) => {
 			}
 			return d.name
 		})
+		.attr('pointer-events', 'none')
 		.attr('fill', d => d.type === 'head' && settings.NODE_BORDER_COLOR_HEAD)
 
 	// This function is run at each iteration of the force algorithm, updating the nodes position.
