@@ -35,7 +35,7 @@ const Graph = ({nodes, links}) => {
 				.id(d => d.id) // This provide  the id of a node
 				.links(links) // and this the list of links
 		)
-		.force('charge', d3.forceManyBody().strength(-2500)) // This adds repulsion between nodes. Play with the -400 for the repulsion strength
+		.force('charge', d3.forceManyBody().strength(-1500)) // This adds repulsion between nodes. Play with the -400 for the repulsion strength
 		.force('center', d3.forceCenter(width / 2, height / 2)) // This force attracts nodes to the center of the svg area
 		.on('tick', ticked)
 		.on('end', ticked)
