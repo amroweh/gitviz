@@ -5,7 +5,6 @@ const getGraphLayout = () => {
 }
 
 export default {
-	// Graph Styles
 	// main layout
 	GRAPH_WIDTH: getGraphLayout().graphWidth,
 	GRAPH_HEIGHT: getGraphLayout().graphHeight,

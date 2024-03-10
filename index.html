@@ -9,11 +9,31 @@
 	<body>
 		<!-- Components -->
 		<div id="graph">
-			<div id="zoom_controls">
-				<div class="zoom_btn" id="zoom_in_btn">+</div>
-				<div class="zoom_btn" id="zoom_out_btn">-</div>
-				<div class="zoom_btn" id="zoom_reset_btn">&#8634;</div>
-				<div class="zoom_btn" id="zoom_far_btn">&#8902;</div>
+			<div id="help_box">
+				<div id="help_box_exit_btn">&#10005;</div>
+				<h2>Help</h2>
+				<br />
+				<p>
+					Gitviz is a visualizer tool for git. It simulates the functionality of git using JS objects and visualizes the
+					different git entities using a force-directed network graph provided by the D3.JS library. In order to use it,
+					just run your git commands on the terminal below.<br /><br />Currently supported commands are:
+				</p>
+				<ul id="help_box_supported_commands">
+					<li>git init</li>
+					<li>git checkout 'some branch'</li>
+					<li>git add .</li>
+					<li>git commit -m 'some message'</li>
+					<li>git merge 'commit1' 'commit2'</li>
+				</ul>
+			</div>
+			<div id="controls">
+				<div class="ctrl_btn" id="help_btn">?</div>
+				<div id="zoom_controls">
+					<div class="ctrl_btn" id="zoom_in_btn">+</div>
+					<div class="ctrl_btn" id="zoom_out_btn">-</div>
+					<div class="ctrl_btn" id="zoom_reset_btn">&#8634;</div>
+					<div class="ctrl_btn" id="zoom_far_btn">&#8902;</div>
+				</div>
 			</div>
 		</div>
 		<div id="terminal">
@@ -47,7 +67,7 @@
 		<!-- Scripts -->
 		<script type="module" src="./settings.js"></script>
 		<script type="module" src="./zoom.js"></script>
-		<script type="module" src="./menus.js"></script>
+		<script type="module" src="./controls.js"></script>
 		<script type="module" src="./gitstate.js"></script>
 		<script type="module" src="./graph.js"></script>
 		<script type="module" src="./index.js"></script>
