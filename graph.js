@@ -7,10 +7,7 @@ const Graph = ({nodes, links}) => {
 	// set the dimensions and margins of the graph
 	const margin = {top: 0, right: 0, bottom: 0, left: 0},
 		width = settings.GRAPH_WIDTH - margin.left - margin.right,
-		height = settings.GRAPH_HEIGHT - margin.top - margin.bottom - settings.GRAPH_BORDER_SIZE,
-		radius = settings.NODE_DIAMETER_COMMIT,
-		textOffsetX = 1.2 * radius,
-		textOffsetY = 0
+		height = settings.GRAPH_HEIGHT - margin.top - margin.bottom - settings.GRAPH_BORDER_SIZE
 
 	// append the svg object to the Box component with the dimensions defined above (removes first if already exists)
 	if (!d3.select('#graph').select('svg').empty()) {
@@ -91,6 +88,8 @@ const Graph = ({nodes, links}) => {
 			else if (d.type === 'branch' || d.type === 'head')
 				return 'translate(-' + settings.NODE_WIDTH_BRANCH / 2 + ' -' + settings.NODE_HEIGHT_BRANCH / 2 + ')'
 		})
+		.attr('rx', settings.NODE_WIDTH_BRANCH * 0.1)
+		.attr('ry', settings.NODE_HEIGHT_BRANCH * 0.25)
 		.call(
 			d3
 				.drag()
@@ -119,7 +118,7 @@ const Graph = ({nodes, links}) => {
 		.text(d => {
 			if (d.name.length > settings.BRANCH_LABEL_MAX_LENGTH) {
 				if (d.type === 'branch' || d.type === 'head') return d.name.slice(0, settings.BRANCH_LABEL_MAX_LENGTH) + '..'
-				if (d.type === 'commit' || d.type === 'head') return d.name.slice(0, settings.COMMIT_LABEL_MAX_LENGTH) + '..'
+				if (d.type === 'commit' || d.type === 'head') return d.id.toString().slice(0, settings.COMMIT_LABEL_MAX_LENGTH) + '..'
 			}
 			return d.name
 		})
