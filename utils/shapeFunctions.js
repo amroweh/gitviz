@@ -44,8 +44,8 @@ export const getNodeDimensions = type => {
 		}
 	if (type === 'commit' || type === 'mergecommit')
 		return {
-			width: settings.NODE_RADIUS_COMMIT,
-			height: settings.NODE_RADIUS_COMMIT
+			width: settings.NODE_DIAMETER_COMMIT,
+			height: settings.NODE_DIAMETER_COMMIT
 		}
 }
 
@@ -57,8 +57,8 @@ export const getTextPosition = type => {
 		}
 	if (type === 'commit' || type === 'mergecommit')
 		return {
-			x: settings.NODE_RADIUS_COMMIT,
-			y: settings.NODE_RADIUS_COMMIT
+			x: settings.NODE_DIAMETER_COMMIT,
+			y: settings.NODE_DIAMETER_COMMIT
 		}
 }
 
