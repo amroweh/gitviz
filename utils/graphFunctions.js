@@ -24,6 +24,7 @@ const convertStateToGraph = () => {
 			type: isMergeCommit ? 'mergecommit' : 'commit',
 			withShadow: headHistory.includes(commit.id)
 		})
+		console.log(commit)
 		if (commit.parentCommits) {
 			commit.parentCommits.forEach(parentCommit =>
 				links.push({
@@ -38,17 +39,14 @@ const convertStateToGraph = () => {
 	// Create Nodes & Links for Branches
 	gitState.Branches.forEach(branch => {
 		const branchGraphId = newCommitId()
-		nodes.push({id: branchGraphId, name: branch.name, type: 'branch'})
+		nodes.push({id: branch.name, name: branch.name, type: 'branch'})
 		if (branch.pointsTo !== null && branch.pointsTo !== undefined)
-			links.push({source: branchGraphId, target: branch.pointsTo})
+			links.push({source: branch.name, target: branch.pointsTo})
 	})
 	// Create Nodes & Links for HEAD
 	const headId = newCommitId()
 	nodes.push({id: headId, name: 'H', type: 'head'})
-	links.push({
-		source: headId,
-		target: Number.isInteger(headRef) ? headRef : nodes.find(branch => branch.name === headRef).id
-	})
+	links.push({source: headId, target: headRef})
 
 	console.log({nodes, links, headId: headRef})
 	return {nodes, links, headId: headRef}
