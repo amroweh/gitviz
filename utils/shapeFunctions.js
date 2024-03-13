@@ -67,3 +67,48 @@ export const getLinkColour = (from, to) => {
 	if (from === 'head' || to === 'head') return settings.LINK_COLOUR_H_CB
 	if (from === 'branch' || to === 'branch') return settings.LINK_COLOUR_B_C
 }
+
+export const getLabelDimensions = type => {
+	if (type === 'branch' || type === 'head')
+		return {
+			width: settings.NODE_WIDTH_BRANCH,
+			height: settings.NODE_HEIGHT_BRANCH
+		}
+	if (type === 'commit' || type === 'mergecommit')
+		return {
+			width: settings.COMMIT_LABEL_WIDTH + 2 * settings.COMMIT_LABEL_PADDING_X,
+			height: settings.COMMIT_LABEL_HEIGHT + 2 * settings.COMMIT_LABEL_PADDING_Y
+		}
+}
+
+export const getLabelContainerPosition = d => {
+	if (d.type === 'branch' || d.type === 'head')
+		return {
+			x: d.x - settings.NODE_WIDTH_BRANCH / 2,
+			y: d.y - settings.NODE_HEIGHT_BRANCH / 2 + settings.COMMIT_LABEL_OFFSET_Y
+		}
+	if (d.type === 'commit' || d.type === 'mergecommit')
+		return {
+			x: d.x + settings.NODE_DIAMETER_COMMIT / 2 + settings.COMMIT_LABEL_OFFSET_X,
+			y: d.y
+		}
+}
+
+export const getLabelRectFill = type => {
+	if (type === 'branch' || type === 'head') return 'none'
+	if (type === 'commit' || type === 'mergecommit') return settings.COMMIT_LABEL_COLOR
+}
+
+export function getLabelTextPosition(d, context) {
+	if (d.type === 'branch' || d.type === 'head') {
+		return {
+			x: settings.NODE_WIDTH_BRANCH / 2 - context.getBBox().width / 2,
+			y: settings.NODE_HEIGHT_BRANCH / 2 + context.getBBox().height / 4
+		}
+	} else if (d.type === 'commit' || d.type === 'mergecommit') {
+		return {
+			x: settings.COMMIT_LABEL_WIDTH / 2 + settings.COMMIT_LABEL_PADDING_X - context.getBBox().width / 2,
+			y: settings.COMMIT_LABEL_HEIGHT / 2 + settings.COMMIT_LABEL_PADDING_Y + context.getBBox().height / 4
+		}
+	}
+}
