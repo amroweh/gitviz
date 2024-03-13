@@ -2,12 +2,18 @@ import {working_area_files} from './utils/areaFunctions.js'
 import {updateGraph} from './utils/graphFunctions.js'
 import {newCommitId, newTreeId, newBlobId} from './utils/idGen.js'
 
+// Only needed for inital graph drawing
+const generateCommitIds = () => {
+	return [newCommitId(), newCommitId(), newCommitId(), newCommitId(), newCommitId()]
+}
+const dummyCommitIds = generateCommitIds()
+
 export const gitState = {
 	initialized: false,
-	HEAD: 2,
+	HEAD: 'main',
 	Branches: [
-		{name: 'main', pointsTo: 5},
-		{name: 'myBranch', pointsTo: 2}
+		{name: 'main', pointsTo: dummyCommitIds[0]},
+		{name: 'myBranch', pointsTo: dummyCommitIds[1]}
 	],
 	Objects: {
 		Blobs: [
@@ -38,11 +44,46 @@ export const gitState = {
 			}
 		],
 		Commits: [
-			{id: newCommitId(), message: 'initialcommit', tree: 2, parentCommits: null, author: 'ali', committer: 'ali'},
-			{id: newCommitId(), message: '2nd commit', tree: 0, parentCommits: [1], author: 'ali', committer: 'ali'},
-			{id: newCommitId(), message: '3rd commit', tree: 0, parentCommits: [2], author: 'ali', committer: 'ali'},
-			{id: newCommitId(), message: '4th commit', tree: 1, parentCommits: [3], author: 'ali', committer: 'ali'},
-			{id: newCommitId(), message: '5th commit', tree: 1, parentCommits: [3], author: 'ali', committer: 'ali'}
+			{
+				id: dummyCommitIds[0],
+				message: 'initialcommit',
+				tree: 2,
+				parentCommits: null,
+				author: 'ali',
+				committer: 'ali'
+			},
+			{
+				id: dummyCommitIds[1],
+				message: '2nd commit',
+				tree: 0,
+				parentCommits: [dummyCommitIds[0]],
+				author: 'ali',
+				committer: 'ali'
+			},
+			{
+				id: dummyCommitIds[2],
+				message: '3rd commit',
+				tree: 0,
+				parentCommits: [dummyCommitIds[1]],
+				author: 'ali',
+				committer: 'ali'
+			},
+			{
+				id: dummyCommitIds[3],
+				message: '4th commit',
+				tree: 1,
+				parentCommits: [dummyCommitIds[2]],
+				author: 'ali',
+				committer: 'ali'
+			},
+			{
+				id: dummyCommitIds[4],
+				message: '5th commit',
+				tree: 1,
+				parentCommits: [dummyCommitIds[3]],
+				author: 'ali',
+				committer: 'ali'
+			}
 		]
 	},
 	Index: [

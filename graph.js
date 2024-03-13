@@ -1,7 +1,15 @@
 import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7/+esm'
 import {dragstarted, dragged, dragended} from '../utils/dragFunctions.js'
 import settings from './settings.js'
-import {createSvgArrowHead, getLinkColour, getNodeDimensions, getTextPosition} from './utils/shapeFunctions.js'
+import {
+	createSvgArrowHead,
+	getLabelContainerPosition,
+	getLabelDimensions,
+	getLabelRectFill,
+	getLabelTextPosition,
+	getLinkColour,
+	getNodeDimensions,
+} from './utils/shapeFunctions.js'
 
 const Graph = ({nodes, links}) => {
 	// set the dimensions and margins of the graph
@@ -99,31 +107,40 @@ const Graph = ({nodes, links}) => {
 		)
 
 	// Initialize the text containers
-	const labelContainer = svg.selectAll('text').data(nodes).enter().append('g')
+	const labelContainer = svg.selectAll('svg').data(nodes).enter().append('svg')
 
 	// Add commit label rectangle
 	const commitLabel = labelContainer
 		.append('rect')
-		.attr('width', settings.COMMIT_LABEL_WIDTH + 2 * settings.COMMIT_LABEL_PADDING_X)
-		.attr('height', settings.COMMIT_LABEL_HEIGHT + 2 * settings.COMMIT_LABEL_PADDING_Y)
-		.style('fill', settings.COMMIT_LABEL_COLOR)
-		.style('display', d => !(d.type === 'commit' || d.type === 'mergecommit') && 'none')
+		.attr('width', d => getLabelDimensions(d.type).width)
+		.attr('height', d => getLabelDimensions(d.type).height)
+		.style('fill', d => getLabelRectFill(d.type))
 		.attr('rx', settings.COMMIT_LABEL_WIDTH * 0.1)
 		.attr('ry', settings.COMMIT_LABEL_HEIGHT * 0.25)
 
 	// Add commit label texts
-	const nodeNameText = labelContainer
+	const commitLabelText = labelContainer
 		.append('text')
-		.attr('class', 'nodeNameText')
+		.attr('class', 'commitLabelText')
 		.text(d => {
 			if (d.name.length > settings.BRANCH_LABEL_MAX_LENGTH) {
 				if (d.type === 'branch' || d.type === 'head') return d.name.slice(0, settings.BRANCH_LABEL_MAX_LENGTH) + '..'
-				if (d.type === 'commit' || d.type === 'head') return d.id.toString().slice(0, settings.COMMIT_LABEL_MAX_LENGTH) + '..'
+				if (d.type === 'commit' || d.type === 'head')
+					return d.id.toString().slice(0, settings.COMMIT_LABEL_MAX_LENGTH) + '..'
 			}
 			return d.name
 		})
+		.attr('x', function (d) {
+			return getLabelTextPosition(d, this).x
+		})
+		.attr('y', function (d) {
+			return getLabelTextPosition(d, this).y
+		})
 		.attr('pointer-events', 'none')
-		.attr('fill', d => d.type === 'head' && settings.NODE_BORDER_COLOR_HEAD)
+		.attr('fill', d => {
+			if (d.type === 'head') return settings.NODE_BORDER_COLOR_HEAD
+			else if (d.type === 'commit' || d.type === 'mergecommit') return settings.COMMIT_LABEL_TEXT_COLOR
+		})
 
 	// This function is run at each iteration of the force algorithm, updating the nodes position.
 	// note: d is provided by the simulation
@@ -135,22 +152,7 @@ const Graph = ({nodes, links}) => {
 			.attr('y2', d => d.target.y)
 
 		node.attr('x', d => d.x).attr('y', d => d.y)
-		commitLabel
-			.attr('x', d => d.x + settings.NODE_DIAMETER_COMMIT / 2 + settings.COMMIT_LABEL_OFFSET_X)
-			.attr('y', d => d.y + settings.COMMIT_LABEL_OFFSET_Y)
-		nodeNameText
-			.attr('x', function (d) {
-				if (d.type === 'commit' || d.type === 'mergecommit')
-					return (
-						d.x + settings.NODE_DIAMETER_COMMIT / 2 + settings.COMMIT_LABEL_OFFSET_X + settings.COMMIT_LABEL_PADDING_X
-					)
-				else if (d.type === 'branch' || d.type === 'head') return d.x - this.getBBox().width / 2
-			})
-			.attr('y', function (d) {
-				if (d.type === 'commit' || d.type === 'mergecommit')
-					return d.y + this.getBBox().height / 4 + settings.COMMIT_LABEL_HEIGHT / 2 + settings.COMMIT_LABEL_PADDING_Y
-				else if (d.type === 'branch' || d.type === 'head') return d.y + this.getBBox().height / 4
-			})
+		labelContainer.attr('x', d => getLabelContainerPosition(d).x).attr('y', d => getLabelContainerPosition(d).y)
 	}
 }
 

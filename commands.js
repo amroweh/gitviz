@@ -69,7 +69,7 @@ export const run = cmd => {
 
 		// check if branch/commit exists
 		const branch = findBranchByName(stringToCheckout)
-		const commit = findCommitById(stringToCheckout * 1)
+		const commit = findCommitById(stringToCheckout)
 		if (!branch && !commit) return addToTerminalHistory('A branch/commit with this name/id does not exist, aborting...')
 
 		// Create message based on node type && set HEAD to new id
