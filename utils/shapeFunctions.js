@@ -112,3 +112,29 @@ export function getLabelTextPosition(d, context) {
 		}
 	}
 }
+
+export const createCopyIcon = element => {
+	const svg = document.createElement('svg')
+	svg.setAttribute('x', 0)
+	svg.setAttribute('y', 0)
+	svg.setAttribute('width', 372)
+	svg.setAttribute('height', 458)
+	svg.setAttribute('viewbox', '0 0 372 458')
+	svg.setAttribute('fill', 'none')
+	const rect = document.createElement('rect')
+	rect.setAttribute('x', 16)
+	rect.setAttribute('y', 72)
+	rect.setAttribute('width', 280)
+	rect.setAttribute('height', 369.751)
+	rect.setAttribute('rx', 56)
+	rect.setAttribute('stroke', 'black')
+	rect.setAttribute('stroke-width', 32)
+	const path = document.createElement('path')
+	path.setAttribute('d', 'M119 16H280C321.974 16 356 50.0264 356 92V340')
+	path.setAttribute('stroke', 'black')
+	path.setAttribute('stroke-width', 32)
+	path.setAttribute('stroke-linecap', 'round')
+	svg.appendChild(rect)
+	svg.appendChild(path)
+	return svg
+}

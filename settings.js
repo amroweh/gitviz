@@ -33,5 +33,8 @@ export default {
 	LINK_COLOUR_C_C: '#bf9950',
 	LINK_COLOUR_B_C: '#68B3A2',
 	LINK_COLOUR_H_CB: '#8B0000',
-	LINK_SHADOW_COLOR: 'none'
+	LINK_SHADOW_COLOR: 'none',
+	// Other
+	COPY_ICON_WIDTH: 20,
+	COPY_ICON_HEIGHT: 16
 }

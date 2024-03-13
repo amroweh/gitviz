@@ -2,13 +2,14 @@ import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7/+esm'
 import {dragstarted, dragged, dragended} from '../utils/dragFunctions.js'
 import settings from './settings.js'
 import {
+	createCopyIcon,
 	createSvgArrowHead,
 	getLabelContainerPosition,
 	getLabelDimensions,
 	getLabelRectFill,
 	getLabelTextPosition,
 	getLinkColour,
-	getNodeDimensions,
+	getNodeDimensions
 } from './utils/shapeFunctions.js'
 
 const Graph = ({nodes, links}) => {
@@ -141,6 +142,35 @@ const Graph = ({nodes, links}) => {
 			if (d.type === 'head') return settings.NODE_BORDER_COLOR_HEAD
 			else if (d.type === 'commit' || d.type === 'mergecommit') return settings.COMMIT_LABEL_TEXT_COLOR
 		})
+
+	// Add commit label copy button
+	labelContainer.each(function (d) {
+		const data = d
+		if (d.type === 'commit' || d.type === 'mergecommit') {
+			const image = d3
+				.select(this)
+				.append('image')
+				.attr('class', 'copyIcon')
+				.attr('x', settings.COMMIT_LABEL_WIDTH + settings.COMMIT_LABEL_PADDING_X * 2 - settings.COPY_ICON_WIDTH)
+				.attr('y', settings.COMMIT_LABEL_HEIGHT / 2 + settings.COMMIT_LABEL_PADDING_Y - settings.COPY_ICON_HEIGHT / 2)
+				.attr('width', settings.COPY_ICON_WIDTH)
+				.attr('height', settings.COPY_ICON_HEIGHT)
+				.attr('xlink:href', 'Assets/copy.png')
+				.style('opacity', 0)
+				.style('cursor', 'pointer')
+				.on('click', () => {
+					navigator.clipboard.writeText(data.id)
+					image.attr('xlink:href', 'Assets/copy_green.png')
+				})
+		}
+	})
+
+	labelContainer.on('mouseover', function (d) {
+		d3.select(this).select('.copyIcon').style('opacity', 1)
+	})
+	labelContainer.on('mouseout', function (d) {
+		d3.select(this).select('.copyIcon').style('opacity', 0).attr('xlink:href', 'Assets/copy.png')
+	})
 
 	// This function is run at each iteration of the force algorithm, updating the nodes position.
 	// note: d is provided by the simulation
