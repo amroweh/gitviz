@@ -161,6 +161,9 @@ const Graph = ({nodes, links}) => {
 				.on('click', () => {
 					navigator.clipboard.writeText(data.id)
 					image.attr('xlink:href', 'Assets/copy_green.png')
+					setTimeout(() => {
+						image.attr('xlink:href', 'Assets/copy.png')
+					}, 2000)
 				})
 		}
 	})
@@ -169,7 +172,7 @@ const Graph = ({nodes, links}) => {
 		d3.select(this).select('.copyIcon').style('opacity', 1)
 	})
 	labelContainer.on('mouseout', function (d) {
-		d3.select(this).select('.copyIcon').style('opacity', 0).attr('xlink:href', 'Assets/copy.png')
+		d3.select(this).select('.copyIcon').style('opacity', 0)
 	})
 
 	// This function is run at each iteration of the force algorithm, updating the nodes position.
