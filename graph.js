@@ -118,12 +118,16 @@ const Graph = ({nodes, links}) => {
 		.text(d => {
 			if (d.name.length > settings.BRANCH_LABEL_MAX_LENGTH) {
 				if (d.type === 'branch' || d.type === 'head') return d.name.slice(0, settings.BRANCH_LABEL_MAX_LENGTH) + '..'
-				if (d.type === 'commit' || d.type === 'head') return d.id.toString().slice(0, settings.COMMIT_LABEL_MAX_LENGTH) + '..'
+				if (d.type === 'commit' || d.type === 'head')
+					return d.id.toString().slice(0, settings.COMMIT_LABEL_MAX_LENGTH) + '..'
 			}
 			return d.name
 		})
 		.attr('pointer-events', 'none')
-		.attr('fill', d => d.type === 'head' && settings.NODE_BORDER_COLOR_HEAD)
+		.attr('fill', d => {
+			if (d.type === 'head') return settings.NODE_BORDER_COLOR_HEAD
+			else if (d.type === 'commit' || d.type === 'mergecommit') return settings.COMMIT_LABEL_TEXT_COLOR
+		})
 
 	// This function is run at each iteration of the force algorithm, updating the nodes position.
 	// note: d is provided by the simulation
