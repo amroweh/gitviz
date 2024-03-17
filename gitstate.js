@@ -105,7 +105,7 @@ export const findBranchByName = name => {
 }
 export const addBranch = (name = 'branch', ref = gitState.HEAD) => {
 	if (findBranchByName(name)) throw new Error('A branch with this name already exists. Aborting...')
-	const pointsTo = Number.isInteger(ref) ? ref : getCommitIdPointedByBranch_Name(ref)
+	const pointsTo = ref
 	gitState.Branches.push({name, pointsTo})
 	gitState.HEAD = name
 	updateGraph()
