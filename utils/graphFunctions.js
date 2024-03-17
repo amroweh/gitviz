@@ -15,6 +15,7 @@ const convertStateToGraph = () => {
 	const headRef = gitState.HEAD
 	const headNode = getNodeTypeById(headRef) === 'branch' ? findBranchByName(headRef) : findCommitById(headRef)
 	const headHistory = generateNodeHistoryWithCommit(headNode)
+	console.log(headHistory)
 	// Create Nodes & Links for Commits
 	gitState.Objects.Commits.forEach(commit => {
 		const isMergeCommit = commit.parentCommits?.length > 1
