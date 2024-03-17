@@ -181,3 +181,23 @@ body {
 	right: 0;
 	transition: right 300ms ease;
 }
+
+/* Info Area */
+#info_area{
+	height: 100%;
+	background-color: darkblue;
+	color: beige;
+	position: absolute;
+	top: 0;
+	right: 0;
+	min-width: 25vw;
+	max-width: 400px;
+	padding: 20px;
+	transition: right 200ms ease;
+}
+
+#info_area_exit_btn{
+	position: absolute;
+	top: 20px;
+	right: 20px;
+}

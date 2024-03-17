@@ -105,6 +105,7 @@ const Graph = ({nodes, links}) => {
 				.on('drag', (e, d) => dragged(e, d, simulation))
 				.on('end', (e, d) => dragended(e, d, simulation))
 		)
+		.on('click', (e,d)=>console.log('clicked: '+d.type))
 
 	// Initialize the text containers
 	const labelContainer = svg.selectAll('svg').data(nodes).enter().append('svg')
