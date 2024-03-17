@@ -1,5 +1,5 @@
 import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7/+esm'
-import {dragstarted, dragged, dragended} from '../utils/dragFunctions.js'
+import {dragstarted, dragged, dragended} from './utils/dragFunctions.js'
 import settings from './settings.js'
 import {
 	createSvgArrowHead,
