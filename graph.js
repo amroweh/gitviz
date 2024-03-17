@@ -123,9 +123,16 @@ const Graph = ({nodes, links}) => {
 		.append('text')
 		.attr('class', 'commitLabelText')
 		.text(d => {
-			if (d.type === 'branch' || d.type === 'head') return d.name.slice(0, settings.BRANCH_LABEL_MAX_LENGTH) + '..'
-			if (d.type === 'commit' || d.type === 'head')
-				return d.id.toString().slice(0, settings.COMMIT_LABEL_MAX_LENGTH) + '..'
+			if (d.type === 'branch' || d.type === 'head') {
+				return d.name.length > settings.BRANCH_LABEL_MAX_LENGTH
+					? d.name.slice(0, settings.BRANCH_LABEL_MAX_LENGTH) + '..'
+					: d.name
+			}
+			if (d.type === 'commit' || d.type === 'mergecommit') {
+				return d.id.length > settings.COMMIT_LABEL_MAX_LENGTH
+					? d.id.slice(0, settings.COMMIT_LABEL_MAX_LENGTH) + '..'
+					: d.id
+			}
 		})
 		.attr('x', function (d) {
 			return getLabelTextPosition(d, this).x
