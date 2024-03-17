@@ -103,9 +103,10 @@ export const findBranchByName = name => {
 	if (isNotDefined(name)) throw new Error('No branch name specified. Aborting...')
 	return gitState.Branches.find(branch => branch.name === name)
 }
-export const addBranch = (name = 'branch', ref = gitState.HEAD) => {
+export const addBranch = (name, ref = gitState.HEAD) => {
+	if (isNotDefined(name)) throw new Error('No branch name specified. Aborting...')
 	if (findBranchByName(name)) throw new Error('A branch with this name already exists. Aborting...')
-	const pointsTo = ref
+	const pointsTo = findCommitById(ref)?.id || getCommitIdPointedByBranch_Name(ref)
 	gitState.Branches.push({name, pointsTo})
 	gitState.HEAD = name
 	updateGraph()

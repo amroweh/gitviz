@@ -39,7 +39,6 @@ const convertStateToGraph = () => {
 	})
 	// Create Nodes & Links for Branches
 	gitState.Branches.forEach(branch => {
-		const branchGraphId = newCommitId()
 		nodes.push({id: branch.name, name: branch.name, type: 'branch'})
 		if (branch.pointsTo !== null && branch.pointsTo !== undefined)
 			links.push({source: branch.name, target: branch.pointsTo})
