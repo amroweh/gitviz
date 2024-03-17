@@ -15,3 +15,10 @@ Gitviz is a visualizer tool for git. It simulates the functionality of git using
 - git branch
 - git branch -d 'some branch'
 
+## Main Sections
+
+This site contains three main sections: the terminal, the graph, and the info pane. The terminal is where you write in your git commands (make sure to start with a git init!). The graph is where your git state is visualised. The info pane contains some information about the different nodes in the graph. This can be accessed by clicking on one of the nodes in the graph.
+
+## Settings
+
+The 'settings' file contains all the stylistic settings for the graph. This can be modified to change the visualisation accordingly.
