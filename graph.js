@@ -2,7 +2,6 @@ import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7/+esm'
 import {dragstarted, dragged, dragended} from '../utils/dragFunctions.js'
 import settings from './settings.js'
 import {
-	createCopyIcon,
 	createSvgArrowHead,
 	getLabelContainerPosition,
 	getLabelDimensions,
@@ -124,12 +123,9 @@ const Graph = ({nodes, links}) => {
 		.append('text')
 		.attr('class', 'commitLabelText')
 		.text(d => {
-			if (d.name.length > settings.BRANCH_LABEL_MAX_LENGTH) {
-				if (d.type === 'branch' || d.type === 'head') return d.name.slice(0, settings.BRANCH_LABEL_MAX_LENGTH) + '..'
-				if (d.type === 'commit' || d.type === 'head')
-					return d.id.toString().slice(0, settings.COMMIT_LABEL_MAX_LENGTH) + '..'
-			}
-			return d.name
+			if (d.type === 'branch' || d.type === 'head') return d.name.slice(0, settings.BRANCH_LABEL_MAX_LENGTH) + '..'
+			if (d.type === 'commit' || d.type === 'head')
+				return d.id.toString().slice(0, settings.COMMIT_LABEL_MAX_LENGTH) + '..'
 		})
 		.attr('x', function (d) {
 			return getLabelTextPosition(d, this).x
