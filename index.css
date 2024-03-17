@@ -194,6 +194,7 @@ body {
 	min-width: 25vw;
 	max-width: 400px;
 	padding: 20px;
+	opacity: 0;
 	transition: opacity 200ms ease;
 	font-family: Arial, Helvetica, sans-serif;
 }
@@ -206,9 +207,14 @@ body {
 
 #info_area_exit_btn:hover {
 	cursor: pointer;
-	color: red;
+	color: lightblue;
 }
 
-#info_area h2{
+#info_area h2 {
 	font-size: medium;
+}
+
+/* For Graph */
+.node {
+	cursor: pointer;
 }

@@ -58,6 +58,7 @@ const Graph = ({nodes, links}) => {
 		.data(links)
 		.enter()
 		.append('line')
+		.classed('link', true)
 		.style('stroke', function (d) {
 			return getLinkColour(d.source.type, d.target.type)
 		})
@@ -76,6 +77,7 @@ const Graph = ({nodes, links}) => {
 		.data(nodes)
 		.enter()
 		.append('rect')
+		.classed('node', true)
 		.attr('width', d => getNodeDimensions(d.type).width)
 		.attr('height', d => getNodeDimensions(d.type).height)
 		.style('fill', d => {
@@ -112,7 +114,7 @@ const Graph = ({nodes, links}) => {
 		})
 
 	// Initialize the text containers
-	const labelContainer = svg.selectAll('svg').data(nodes).enter().append('svg')
+	const labelContainer = svg.selectAll('svg').data(nodes).enter().append('svg').classed('label_container', true)
 
 	// Add commit label rectangle
 	const commitLabel = labelContainer
