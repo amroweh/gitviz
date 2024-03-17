@@ -208,3 +208,7 @@ body {
 	cursor: pointer;
 	color: red;
 }
+
+#info_area h2{
+	font-size: medium;
+}

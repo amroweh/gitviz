@@ -10,6 +10,7 @@ import {
 	getLinkColour,
 	getNodeDimensions
 } from './utils/shapeFunctions.js'
+import {showInfoPane, updateInfoPane} from './controls.js'
 
 const Graph = ({nodes, links}) => {
 	// set the dimensions and margins of the graph
@@ -105,7 +106,10 @@ const Graph = ({nodes, links}) => {
 				.on('drag', (e, d) => dragged(e, d, simulation))
 				.on('end', (e, d) => dragended(e, d, simulation))
 		)
-		.on('click', (e,d)=>console.log('clicked: '+d.type))
+		.on('click', (e, d) => {
+			updateInfoPane(d)
+			showInfoPane()
+		})
 
 	// Initialize the text containers
 	const labelContainer = svg.selectAll('svg').data(nodes).enter().append('svg')
