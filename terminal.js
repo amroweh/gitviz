@@ -1,6 +1,7 @@
 import {diffWorkingStaging, gitState} from './gitstate.js'
 import {run} from './commands.js'
 
+const terminalHistorySection = document.querySelector('#terminal_history_section')
 const terminalInputElement = document.querySelector('#terminal_input')
 const terminalHistoryElement = document.querySelector('#terminal_history')
 const terminalPromptElement = document.querySelector('#terminal_prompt')
@@ -20,6 +21,7 @@ terminalInputElement.addEventListener('keydown', e => {
 		run(terminalInputText)
 		clearTerminalInput()
 		resetCmdIndex()
+		scrollTerminalSectionHistoryBottom()
 	}
 	if (e.key === 'ArrowUp') {
 		e.preventDefault()
@@ -27,7 +29,9 @@ terminalInputElement.addEventListener('keydown', e => {
 		cmdIndex--
 	}
 })
-
+function scrollTerminalSectionHistoryBottom() {
+	terminalHistorySection.scrollTop = terminalHistorySection.scrollHeight
+}
 const addToCommandHistory = cmd => {
 	cmdHistory.push(cmd)
 }
