@@ -4,6 +4,8 @@
 
 Gitviz is a visualizer tool for git. It simulates the functionality of git using JS objects and visualizes the different git entities using a force-directed network graph provided by the D3.JS library. In order to use it, just run your git commands on the terminal below.
 
+You can check it out on: https://amroweh.github.io/gitviz/
+
 ## Currently supported commands are:
 
 - git init
