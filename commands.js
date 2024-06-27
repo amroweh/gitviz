@@ -102,9 +102,11 @@ export const run = cmd => {
 	if (regex5.test(cmd)) {
 		console.log('regex 5 passed!')
 		// extract commit message from this array
-		const commitMessage = words.length === 4 ? words[3] : null
+		let commitMessage = words.length >= 4 ? words.slice(3).join(' ') : null
 		if (!commitMessage || commitMessage === '')
 			return addToTerminalHistory('please use the correct git commit syntax: git commit -m <message>')
+		if(commitMessage[0]==='\'') commitMessage = commitMessage.substring(1)
+		if(commitMessage[commitMessage.length-1]==='\'') commitMessage = commitMessage.substring(0,commitMessage.length - 1)
 		// Using bolbs in index, create tree for these blobs
 		const tree = addTree(gitState.Index)
 		// Create commit using this tree
