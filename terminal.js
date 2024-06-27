@@ -50,10 +50,10 @@ export const clearTerminal = () => {
 }
 
 setInterval(() => {
-	if (!gitState.initialized) terminalPromptElement.innerHTML = `gitsim&nbsp;%&nbsp;`
+	if (!gitState.initialized) terminalPromptElement.innerHTML = `gitviz&nbsp;%&nbsp;`
 	else {
 		const diffCircleDisplay = diffWorkingStaging() ? 'inline' : 'none'
-		terminalPromptElement.innerHTML = `gitsim&nbsp;<span style='color: #4AF626;'>[${gitState.HEAD.slice(
+		terminalPromptElement.innerHTML = `gitviz&nbsp;<span style='color: #4AF626;'>[${gitState.HEAD.slice(
 			0,
 			6
 		)}<span style='color: red; display: ${diffCircleDisplay};'>&#x25CF;</span>]</span>&nbsp;%&nbsp;`
