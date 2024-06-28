@@ -179,7 +179,10 @@ export const run = cmd => {
 			changeHead(branchPointedByHead.name)
 			return addToTerminalHistory('Fast-forward...')
 		}
-		// Otherwise, we need to perform a three-way merge
+		else if (commonNodeAncestor === commitToMerge) {
+			return addToTerminalHistory('Already up to date...')
+		}
+		// Otherwise, we need to perform a three-way merge - ISSUE HERE!
 		else {
 			// find diff between each commit and create a new commit from that
 			const resultTree = diffTrees(commitToMerge, currentCommit)

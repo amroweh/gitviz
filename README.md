@@ -13,7 +13,7 @@ You can check it out on: https://amroweh.github.io/gitviz/
 - git checkout -b 'some branch'
 - git add .
 - git commit -m 'some message'
-- git merge 'commit1' 'commit2'
+- git merge branch/commit
 - git branch
 - git branch -d 'some branch'
 

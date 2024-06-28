@@ -309,6 +309,8 @@ const generateBlobArrayFromTree = tree => {
 }
 
 export const diffTrees = (commit1, commit2) => {
+	console.log(commit1)
+	console.log(commit2)
 	const tree1 = findTreeById(commit1.tree)
 	const tree2 = findTreeById(commit2.tree)
 	const treeClone1 = structuredClone(tree1)
